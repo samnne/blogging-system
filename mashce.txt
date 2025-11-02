@@ -1,0 +1,4 @@
+NETLINK_ID = "mashce"
+NAME = SAMUEL NNAWUIHE-ECHEFU
+V_NUMBER = V01053803
+EMAIL = mashce@uvic.ca
