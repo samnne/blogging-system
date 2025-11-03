@@ -1,5 +1,5 @@
 from blogging.blog import Blog
-
+from blogging.post import Post
 
 class Controller:
 
@@ -8,6 +8,7 @@ class Controller:
             "username": "user", "password": "blogging2025"}
         self.is_logged_in: bool = False
         self.blogs: list[Blog] = []
+        self.current_blog: Blog | None = None
 
     def login(self, username: str, password: str) -> bool | None:
         if self.is_logged_in:
@@ -31,6 +32,28 @@ class Controller:
         self.is_logged_in = False
         return True
 
+    def search_blog(self, id: int) -> Blog | None:
+        """
+        Search for a blog by its unique ID.
+        """
+
+        if not self.is_logged_in:
+            print("must be logged in to search blogs")
+            return None
+
+        sorted_blogs = sorted(self.blogs, key=lambda blog: blog.id)
+        left, right = 0, len(sorted_blogs) - 1
+        while left <= right:
+            mid = (left + right) // 2
+            if sorted_blogs[mid].id == id:
+                return sorted_blogs[mid]
+            elif sorted_blogs[mid].id < id:
+                left = mid+1
+            else:
+                right = mid - 1
+        return None
+
+
     def create_blog(self, id: int, name: str, url: str, email: str) -> Blog | None:
         """
         Create a New Blog with the given parameters.
@@ -51,45 +74,24 @@ class Controller:
             return None
         new_blog = Blog(id, name, url, email)
         self.blogs.append(new_blog)
-        self.blogs.sort(key=lambda blog: blog.id)
+
         return new_blog
 
-    def search_blog(self, id: int) -> Blog | None:
-        """
-        Search for a blog by its unique ID.
-        """
-
-        if not self.is_logged_in:
-            print("must be logged in to search blogs")
-            return None
-
-        left, right = 0, len(self.blogs) - 1
-        while left <= right:
-            mid = (left + right) // 2
-            if self.blogs[mid].id == id:
-                return self.blogs[mid]
-            elif self.blogs[mid].id < id:
-                left = mid+1
-            else:
-                right = mid - 1
-        return None
-
-    def retrieve_blogs(self, ff_name: str) -> list[Blog] | None:
+    def retrieve_blogs(self, name: str) -> list[Blog] | None:
         """
         Retrieve blogs whose name contains the given filter string.
 
-        Args: ff_name (str): The fizzy find filter string
+        Args: name (str): The fizzy find filter string
         """
         if not self.is_logged_in:
             print("must be logged in to search blogs")
             return None
 
         filtered_blogs: list[Blog] = [
-            blog for blog in self.blogs if ff_name in blog.name]
+            blog for blog in self.blogs if name in blog.name]
         return filtered_blogs
 
-
-    def update_blog(self,search_id,  new_id: int, name: str = "", url: str = "", email: str = "") -> bool | None:
+    def update_blog(self, search_id,  new_id: int, name: str = "", url: str = "", email: str = "") -> bool | None:
         """
         Update the blog with the given ID using the provided parameters.
         Only non-empty parameters will be used to update the blog.
@@ -103,7 +105,12 @@ class Controller:
         if not self.is_logged_in:
             print("must be logged in to update a blog")
             return None
-
+        
+        
+        if self.current_blog and self.current_blog.id == search_id:
+            return None
+        
+        
         blog_to_update = self.search_blog(search_id)
         if not blog_to_update:
             print("blog with given id does not exist")
@@ -115,7 +122,132 @@ class Controller:
         blog_to_update.set_values(id=new_id, name=name, url=url, email=email)
         return True
 
+    def delete_blog(self, id: int) -> bool | None:
+        """
+        Delete the blog by ID
+
+        Args: id (int): Unique ID for the blog to be deleted
+        Returns: True if deletion was successful, False if blog not found, None if not logged in
+        """
+
+        if not self.is_logged_in:
+            print("must be logged in to delete a blog")
+            return None
+
+        if self.current_blog and self.current_blog.id == id:
+            return None
+        
+     
+        blog_to_delete = self.search_blog(id)
+        if not blog_to_delete:
+            print("blog with given id does not exist")
+            return False
+        
+        
+        self.blogs = [blog for blog in self.blogs if blog.id != id]
+        return True
+
+    def list_blogs(self) -> list[Blog] | None:
+        """
+        List all blogs in the system.
+        Args: None
+        Returns: a list of all the blogs in the system.
+        """
+        if not self.is_logged_in:
+            print("must be logged in to list blogs")
+            return None
+        return self.blogs
+
+    def set_current_blog(self, id: int) -> None:
+        """
+        Sets the current blog
+        """
+        if not self.is_logged_in:
+            print("must be logged in to set current blog")
+            return None
+        
+        search_blog = self.search_blog(id)
+        if not search_blog:
+            print("cannot set a blog that doesnt exist")
+            return None
+        
+        self.current_blog = search_blog
+
+    def get_current_blog(self) -> Blog | None:
+        """
+        Gets the current blog
+        """
+        if not self.is_logged_in:
+            print("must be logged in to get current blog")
+            return None
+        
+        if not self.current_blog:
+            print("No current blog set")
+            return None
+        
+        
+        
+        return self.current_blog
+    def unset_current_blog(self) -> None:
+        """
+        Unsets the current blog
+        """
+        if not self.is_logged_in:
+            print("must be logged in to unset current blog")
+            return None
+        
+        self.current_blog = None
+
+    def create_post(self, title:str, text:str) -> Post | None:
+        """
+        Creates a new post given a current blog
+        """
+        
+        if not self.is_logged_in:
+            print("must be logged in to get current blog")
+            return None
+        
+        if not self.current_blog:
+            print("No current blog set")
+            return None
+        
+        return self.current_blog.create_post(title=title, text=text)
+        
+    def search_post(self, code: int):
+        """
+        Searches for the post given the current code
+        """
+        
+        if not self.is_logged_in:
+            print("must be logged in to get current blog")
+            return None
+        
+        if not self.current_blog:
+            print("No current blog set")
+            return None
+        
+        return self.current_blog.search_post(code)
+    
+    def retrieve_posts(self, text:str) -> list[Post] | None:
+        """
+        Retrieves all the post given a text search string
+        
+        Args: text (str), the text to find 
+        Returns a list of all posts that contain that text in the post
+        """
+        if not self.is_logged_in:
+            print("must be logged in to get current blog")
+            return None
+        
+        if not self.current_blog:
+            print("No current blog set")
+            return None
+        
+        return self.current_blog.retrieve_posts(text)
+        
+        
 
 if __name__ == "__main__":
     controller = Controller()
     controller.login("user", "blogging2025")
+    controller.create_blog(1, "my blog", "my_blog", "blog@com")

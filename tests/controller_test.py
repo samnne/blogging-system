@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest import main
 from blogging.controller import Controller
 from blogging.blog import Blog
-#from blogging.post import Post
+from blogging.post import Post
 
 class ControllerTest(TestCase):
 
@@ -132,30 +132,30 @@ class ControllerTest(TestCase):
 		# try to update a blog when there are no blogs in the system
 		self.assertFalse(self.controller.update_blog(1111114444, 1111114444, "Short Travel", "short_travel", "short.travel@gmail.com"),
 			"cannot update blog when there are no blogs in the system")
-
 		# create some blogs
 		self.controller.create_blog(1111114444, "Short Journey", "short_journey", "short.journey@gmail.com")
 		self.controller.create_blog(1111115555, "Long Journey", "long_journey", "long.journey@gmail.com")
 		self.controller.create_blog(1111112000, "Long Trip", "long_trip", "long.trip@gmail.com")
 		self.controller.create_blog(1111116666, "Short Trip", "short_trip", "short.trip@gmail.com")
 		self.controller.create_blog(1111117777, "Boring Blog", "boring_blog", "boring.blog@gmail.com")
-
-		# update one blog, but keep the Blog key (id) unchanged
+		
+  		# update one blog, but keep the Blog key (id) unchanged
 		self.assertTrue(self.controller.update_blog(1111114444, 1111114444, "Short Travel", "short_travel", "short.travel@gmail.com"), 
 			"update blog data and keep the id unchanged")
 		actual_blog = self.controller.search_blog(1111114444)
 		self.assertNotEqual(expected_blog_1, actual_blog, "blog has updated data, cannot be equal to the original data")
 		expected_blog_3a = Blog(1111114444, "Short Travel", "short_travel", "short.travel@gmail.com")
 		self.assertEqual(expected_blog_3a, actual_blog, "blog was updated, its data have to be updated and correct")
-
-		# update one blog, and change the Blog key (id) as well
+		
+  
+  
+  		# update one blog, and change the Blog key (id) as well
 		self.assertTrue(self.controller.update_blog(1111117777, 1111118888, "Cool Blog", "cool_blog", "cool.blog@gmail.com"), 
 			"update blog data and also change the id")
 		actual_blog = self.controller.search_blog(1111118888)
 		self.assertNotEqual(expected_blog_5, actual_blog, "blog has updated data, cannot be equal to the original data")
 		expected_blog_5a = Blog(1111118888, "Cool Blog", "cool_blog", "cool.blog@gmail.com")
 		self.assertEqual(expected_blog_5a, actual_blog, "blog was updated, its data have to be updated and correct")
-
 		# update one blog with a conflicting existing id
 		self.assertFalse(self.controller.update_blog(1111114444, 1111112000, "Short Travel", "short_travel", "short.travel@gmail.com"), 
 			"cannot update blog and give it a registered id")
@@ -231,6 +231,7 @@ class ControllerTest(TestCase):
 
 		# listing blogs in a larger list
 		blogs_list = self.controller.list_blogs()
+		
 		self.assertEqual(5, len(blogs_list), "list of blogs has size 5")
 		self.assertEqual(expected_blog_1, blogs_list[0], "blog 1 is the first in the list of blogs")
 		self.assertEqual(expected_blog_2, blogs_list[1], "blog 2 is the second in the list of blogs")
