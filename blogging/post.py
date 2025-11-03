@@ -9,11 +9,13 @@ class Post:
         # Post data
         self.title = title
         self.text = text
-        self.creation = datetime.now()
-        self.update = datetime.now()
+        self.creation = (datetime.year, datetime.month, datetime.day, datetime.hour, datetime.minute)
+        self.update = (datetime.year, datetime.month, datetime.day, datetime.hour, datetime.minute)
 
     def __eq__(self, other):
-        return (self.code == other.code)
+        return (self.code == other.code and self.title == other.title and
+                self.text == other.text and self.creation == other.creation and
+                self.update == other.update)
         
     def __repr__(self) -> str:
         return f"Post(Code: {self.code}, Title: {self.title}, Text: {self.text}, Created At: {self.creation}, Last Updated: {self.update})"
