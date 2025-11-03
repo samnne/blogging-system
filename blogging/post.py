@@ -1,24 +1,60 @@
-from datetime import datetime 
+from datetime import datetime
 
 
 class Post:
     def __init__(self, code: int, title: str, text: str):
         # auto incremented key / unique ID
         self.code = code
-        
+
         # Post data
         self.title = title
         self.text = text
-        self.creation = (datetime.year, datetime.month, datetime.day, datetime.hour, datetime.minute)
-        self.update = (datetime.year, datetime.month, datetime.day, datetime.hour, datetime.minute)
+
+        # Timestamps for creation and last update, stored as tuples (year, month, day, hour, minute)
+        self.creation = (
+            datetime.year,
+            datetime.month,
+            datetime.day,
+            datetime.hour,
+            datetime.minute,
+        )
+        self.update = (
+            datetime.year,
+            datetime.month,
+            datetime.day,
+            datetime.hour,
+            datetime.minute,
+        )
+
+    def set_values(self, title, text):
+        """
+        Updates Values of the post given a title and a text
+        Args: title (str): the new title
+                text (str): the new text for the post
+        Returns None
+        """
+        self.title = title
+        self.text = text
+        self.update = (
+            datetime.year,
+            datetime.month,
+            datetime.day,
+            datetime.hour,
+            datetime.minute,
+        )
 
     def __eq__(self, other):
-        return (self.code == other.code and self.title == other.title and
-                self.text == other.text and self.creation == other.creation and
-                self.update == other.update)
-        
+        return (
+            self.code == other.code
+            and self.title == other.title
+            and self.text == other.text
+            and self.creation == other.creation
+            and self.update == other.update
+        )
+
     def __repr__(self) -> str:
         return f"Post(Code: {self.code}, Title: {self.title}, Text: {self.text}, Created At: {self.creation}, Last Updated: {self.update})"
 
     def __str__(self) -> str:
         return f"Title: {self.title}, \nText: {self.text} \nCreated At: {self.creation} \nLast Updated: {self.update}"
+
