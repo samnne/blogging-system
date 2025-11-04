@@ -63,6 +63,7 @@ class Blog:
         """
         Retrieves all posts given a search text.
         Args: text (str): the text to find in posts
+
         Returns a list of all posts that contain the search query in the title or text
         """
         filtered_list = [
