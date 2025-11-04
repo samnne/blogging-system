@@ -9,6 +9,24 @@ class PostTest(TestCase):
     def setUp(self):
         self.blog = Blog(1, "Name", "URL", "email")
 
+    def test_set_values(self):
+
+        expected_post = Post(1, "Let's Test!", "Today")
+
+        # create a post
+        self.blog.create_post("Let's Test!", "Today!!")
+
+        self.assertNotEqual(expected_post, self.blog.posts[0])
+
+        self.blog.posts[0].set_values("Let's Test!", "Today")
+
+        self.assertEqual(expected_post, self.blog.posts[0])
+
+        # can still search the updated post
+        found_post = self.blog.search_post(self.blog.posts[0].code)
+
+        self.assertEqual(expected_post, found_post)
+
     def test_list_posts(self):
 
         expected_post = Post(1, "WSG", "Updated")
