@@ -47,5 +47,12 @@ class PostTest(TestCase):
         self.assertEqual(expected_post3, actual_list[0])
 
 
+def test_stress_test(self): 
+    for i in range(1, 1001): 
+        self.blog.create_post(f"Title {i}", f"Test {i}") 
+    
+    self.assertEqual(1000, len(self.blog.posts))
+
+
 if __name__ == "__main__":
     unittest.main()
