@@ -1,6 +1,9 @@
+Tasks For Assignment 3 - Model
 - Refractor, Modularize Code -> DONE
 ----Use __init__.py to place functions that are repeated -> DONE
 ----Fixed Binary Search to work for both ID and Code -> DONE
 - Document what each variable is from the controller, blog, and post -> DONE
-- Add testing for both Blog
-- Add Complete Unit testing for Post
+- Add testing for both Blog -> Done
+- Add Complete Unit testing for Post -> Done
+
+Tasks for Assignment 4 - Persistance
