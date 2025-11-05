@@ -7,12 +7,12 @@ from blogging.__init__ import binary_search
 class Blog:
     def __init__(self, id: int, name: str, url: str, email: str) -> None:
         # the unique ID of the blog
-        self.id = id
+        self.id: int = id
 
         # blog data
-        self.name = name
-        self.url = url
-        self.email = email
+        self.name: str = name
+        self.url: str = url
+        self.email: str = email
 
         # list of posts in the blog
         self.posts: list[Post] = []
@@ -45,8 +45,8 @@ class Blog:
         Returns the newly created post
         """
 
-        new_code = len(self.posts) + 1
-        new_post = Post(new_code, title, text)
+        new_code: int = len(self.posts) + 1
+        new_post: Post = Post(new_code, title, text)
         self.posts.append(new_post)
         return new_post
 
@@ -65,7 +65,7 @@ class Blog:
 
         Returns a list of all posts that contain the search query in the title or text
         """
-        filtered_list = [
+        filtered_list: list[Post] = [
             post for post in self.posts if text in post.title or text in post.text
         ]
         return filtered_list
@@ -79,7 +79,7 @@ class Blog:
                 text (str): the new text of the post
         Returns the updated post if successful, or None if no post was found
         """
-        post = self.search_post(code)
+        post: Post | None = self.search_post(code)
         if post:
             post.set_values(title, text)
             return post
@@ -94,7 +94,7 @@ class Blog:
         Return True if the post was successfully deleted,
         or False if no post with given code exists
         """
-        post_to_delete = self.search_post(code)
+        post_to_delete: Post | None = self.search_post(code)
 
         if not post_to_delete:
             print("post with given code does not exist")
@@ -113,7 +113,7 @@ class Blog:
         ordered from most recently created to oldest.
         """
         # Return posts in reverse order from given creation date
-        post_in_reverse = self.posts[::-1]
+        post_in_reverse: list[Post] = self.posts[::-1]
         return post_in_reverse
 
     def __eq__(self, other):
@@ -129,5 +129,3 @@ class Blog:
 
     def __str__(self) -> str:
         return f"Blog ID: {self.id}. Name: {self.name}. Website: {self.url}. Email: {self.email}"
-
-

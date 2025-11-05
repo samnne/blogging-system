@@ -4,11 +4,11 @@ from datetime import datetime
 class Post:
     def __init__(self, code: int, title: str, text: str):
         # auto incremented key / unique ID
-        self.code = code
+        self.code: int = code
 
         # Post data
-        self.title = title
-        self.text = text
+        self.title: str = title
+        self.text: str = text
 
         # Timestamps for creation and last update, stored as tuples (year, month, day, hour, minute)
         current_date = (
@@ -19,9 +19,9 @@ class Post:
             datetime.minute,
         )
 
-        self.creation = current_date
+        self.creation: tuple = current_date
 
-        self.update = current_date
+        self.update: tuple = current_date
 
     def set_values(self, title, text):
         """

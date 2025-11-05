@@ -46,7 +46,7 @@ class Controller:
             print("must be logged in to search blogs")
             return None
 
-        sorted_blogs = sorted(self.blogs, key=lambda blog: blog.id)
+        sorted_blogs: list[Blog] = sorted(self.blogs, key=lambda blog: blog.id)
         return binary_search(sorted_blogs, id)
 
     def create_blog(self, id: int, name: str, url: str, email: str) -> Blog | None:
@@ -67,7 +67,7 @@ class Controller:
         if self.search_blog(id):
             print("blog with given id already exists")
             return None
-        new_blog = Blog(id, name, url, email)
+        new_blog: Blog = Blog(id, name, url, email)
         self.blogs.append(new_blog)
 
         return new_blog
@@ -162,7 +162,7 @@ class Controller:
             print("must be logged in to set current blog")
             return None
 
-        search_blog = self.search_blog(id)
+        search_blog: Blog | None = self.search_blog(id)
         if not search_blog:
             print("cannot set a blog that doesnt exist")
             return None
