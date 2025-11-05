@@ -303,7 +303,3 @@ class Controller:
         return self.current_blog.list_posts()
 
 
-if __name__ == "__main__":
-    controller = Controller()
-    controller.login("user", "blogging2025")
-    controller.create_blog(1, "my blog", "my_blog", "blog@com")

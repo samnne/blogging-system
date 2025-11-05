@@ -11,20 +11,17 @@ class Post:
         self.text = text
 
         # Timestamps for creation and last update, stored as tuples (year, month, day, hour, minute)
-        self.creation = (
+        current_date = (
             datetime.year,
             datetime.month,
             datetime.day,
             datetime.hour,
             datetime.minute,
         )
-        self.update = (
-            datetime.year,
-            datetime.month,
-            datetime.day,
-            datetime.hour,
-            datetime.minute,
-        )
+
+        self.creation = current_date
+
+        self.update = current_date
 
     def set_values(self, title, text):
         """
@@ -33,15 +30,17 @@ class Post:
                 text (str): the new text for the post
         Returns None
         """
-        self.title = title
-        self.text = text
-        self.update = (
+        updated_date = (
             datetime.year,
             datetime.month,
             datetime.day,
             datetime.hour,
             datetime.minute,
         )
+
+        self.title = title
+        self.text = text
+        self.update = updated_date
 
     def __eq__(self, other):
         return (
@@ -57,4 +56,3 @@ class Post:
 
     def __str__(self) -> str:
         return f"Title: {self.title}, \nText: {self.text} \nCreated At: {self.creation} \nLast Updated: {self.update}"
-

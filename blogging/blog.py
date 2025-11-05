@@ -1,6 +1,5 @@
 from blogging.post import Post
 
-# from post import Post
 from datetime import datetime
 from blogging.__init__ import binary_search
 
@@ -132,10 +131,3 @@ class Blog:
         return f"Blog ID: {self.id}. Name: {self.name}. Website: {self.url}. Email: {self.email}"
 
 
-if __name__ == "__main__":
-    blog = Blog(1, "2", "3", "5")
-    blog.create_post("teteet", "hegrgwgw")
-    blog.create_post("teteet", "hegrgwgw")
-    blog.create_post("teteet", "hegrgwgw")
-    blog.create_post("teteet", "hegrgwgw")
-    blog.retrieve_posts("gr11")
