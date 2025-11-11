@@ -1,3 +1,4 @@
+from typing import *
 from blogging.blog import Blog
 from blogging.post import Post
 from blogging.__init__ import binary_search, get_password_hash
@@ -7,31 +8,31 @@ from blogging.exception.duplicate_login_exception import DuplicateLoginException
 from blogging.exception.illegal_access_exception import IllegalAccessException
 from blogging.exception.illegal_operation_exception import IllegalOperationException
 
+
 class Controller:
 
     def __init__(self) -> None:
         self.user: dict[str, str] = {
             "user": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
             "ali": "6394ffec21517605c1b426d43e6fa7eb0cff606ded9c2956821c2c36bfee2810",
-            "kala": "e5268ad137eec951a48a5e5da52558c7727aaa537c8b308b5e403e6b434e036e"
+            "kala": "e5268ad137eec951a48a5e5da52558c7727aaa537c8b308b5e403e6b434e036e",
         }
         self.is_logged_in: bool = False
         self.blogs: list[Blog] = []
         self.current_blog: Blog | None = None
 
     # LOG IN/OUT METHODS
-    def login(self, username: str, password: str) -> bool | None:
+    def login(self, username: str, password: str) -> Union[bool, None]:
         if self.is_logged_in:
             print("cannot login again while still logged in")
             raise DuplicateLoginException
 
-        for key,value in self.user.items():
+        for key, value in self.user.items():
             if key == username and value == get_password_hash(password=password):
                 self.is_logged_in = True
                 return True
-        
+
         raise InvalidLoginException
-      
 
     def logout(self):
         if not self.is_logged_in:
@@ -42,7 +43,7 @@ class Controller:
         return True
 
     # CRUD FOR BLOG'S GIVEN A CURRENT USER
-    def search_blog(self, id: int) -> Blog | None:
+    def search_blog(self, id: int) -> Union[Blog, None]:
         """
         Search for a blog by its unique ID.
         Args: id (int): Unique ID of the blog to search for
@@ -56,7 +57,9 @@ class Controller:
         sorted_blogs: list[Blog] = sorted(self.blogs, key=lambda blog: blog.id)
         return binary_search(sorted_blogs, id)
 
-    def create_blog(self, id: int, name: str, url: str, email: str) -> Blog | None:
+    def create_blog(
+        self, id: int, name: str, url: str, email: str
+    ) -> Union[Blog, None]:
         """
         Create a New Blog with the given parameters.
         Returns None if there already exists a blog with the attempted ID.
@@ -71,7 +74,6 @@ class Controller:
             print("must be logged in to create a blog")
             raise IllegalAccessException
 
-
         if self.search_blog(id):
             print("blog with given id already exists")
             raise IllegalOperationException
@@ -81,7 +83,7 @@ class Controller:
 
         return new_blog
 
-    def retrieve_blogs(self, name: str) -> list[Blog] | None:
+    def retrieve_blogs(self, name: str) -> Union[list[Blog], None]:
         """
         Retrieve blogs whose name contains the given filter string.
 
@@ -96,7 +98,7 @@ class Controller:
 
     def update_blog(
         self, search_id, new_id: int, name: str, url: str, email: str
-    ) -> bool | None:
+    ) -> Union[bool, None]:
         """
         Update the blog with the given ID using the provided parameters.
         Only non-empty parameters will be used to update the blog.
@@ -126,7 +128,7 @@ class Controller:
         blog_to_update.set_values(id=new_id, name=name, url=url, email=email)
         return True
 
-    def delete_blog(self, id: int) -> bool | None:
+    def delete_blog(self, id: int) -> Union[bool, None]:
         """
         Delete the blog by ID
 
@@ -150,7 +152,7 @@ class Controller:
         self.blogs = [blog for blog in self.blogs if blog.id != id]
         return True
 
-    def list_blogs(self) -> list[Blog] | None:
+    def list_blogs(self) -> Union[list[Blog], None]:
         """
         List all blogs in the system.
         Args: None
@@ -178,7 +180,7 @@ class Controller:
 
         self.current_blog = search_blog
 
-    def get_current_blog(self) -> Blog | None:
+    def get_current_blog(self) -> Union[Blog, None]:
         """
         Gets the current blog
         Args: None
@@ -208,7 +210,7 @@ class Controller:
 
     # CRUD FOR POST'S GIVEN A CURRENT BLOG
 
-    def create_post(self, title: str, text: str) -> Post | None:
+    def create_post(self, title: str, text: str) -> Union[Post, None]:
         """
         Creates a new post given a current blog
         Args: title (str), the title of the post
@@ -241,7 +243,7 @@ class Controller:
 
         return self.current_blog.search_post(code)
 
-    def retrieve_posts(self, text: str) -> list[Post] | None:
+    def retrieve_posts(self, text: str) -> Union[list[Post], None]:
         """
         Retrieves all the post given a text search string
 
@@ -258,7 +260,7 @@ class Controller:
 
         return self.current_blog.retrieve_posts(text)
 
-    def update_post(self, code: int, title: str, text: str) -> Post | None:
+    def update_post(self, code: int, title: str, text: str) -> Union[Post, None]:
         """
         Updates a post given the code, title and text
 
@@ -277,7 +279,7 @@ class Controller:
 
         return self.current_blog.update_post(code, title, text)
 
-    def delete_post(self, code: int) -> bool | None:
+    def delete_post(self, code: int) -> Union[bool, None]:
         """
         Deletes a post given the code
 
@@ -294,7 +296,7 @@ class Controller:
 
         return self.current_blog.delete_post(code)
 
-    def list_posts(self) -> list[Post] | None:
+    def list_posts(self) -> Union[list[Post], None]:
         """
         Lists all posts in the current blog
         Args: None
@@ -310,6 +312,7 @@ class Controller:
             return None
 
         return self.current_blog.list_posts()
+
 
 if __name__ == "__main__":
     controller = Controller()
