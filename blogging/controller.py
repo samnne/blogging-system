@@ -109,16 +109,14 @@ class Controller:
             raise_exception(IllegalAccessException, "must be logged in to update a blog")
 
         if self.current_blog and self.current_blog.id == search_id:
-            return None
+            raise_exception(IllegalOperationException, "cannot update current blog")
 
         blog_to_update = self.search_blog(search_id)
         if not blog_to_update:
-            print("blog with given id does not exist")
-            return False
+            raise_exception(IllegalOperationException, "cannot update blog that doesnt exist")
 
         if new_id != search_id and self.search_blog(new_id):
-            print("blog with new id already exists")
-            return False
+            raise_exception(IllegalOperationException, "cannot update one blog with conflicting ID")
         blog_to_update.set_values(id=new_id, name=name, url=url, email=email)
         return True
 
