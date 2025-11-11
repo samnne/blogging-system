@@ -158,14 +158,12 @@ class Controller:
         Args: id (int), the unique ID of the blog to set as current
         Returns: None
         """
-        if not self.is_logged_in:
-            print("must be logged in to set current blog")
-            return None
+        if not self.is_logged_in: 
+            raise_exception(IllegalAccessException, "must be logged in to set current blog")
 
         search_blog: Blog | None = self.search_blog(id)
         if not search_blog:
-            print("cannot set a blog that doesnt exist")
-            return None
+            raise_exception(IllegalOperationException, "cannot set a blog that doesnt exist")
 
         self.current_blog = search_blog
 
@@ -176,12 +174,12 @@ class Controller:
         Returns the current Blog or nothing
         """
         if not self.is_logged_in:
-            print("must be logged in to get current blog")
-            return None
+            raise_exception(IllegalAccessException, "must be logged in to get current blog")
+
 
         if not self.current_blog:
-            print("No current blog set")
             return None
+
 
         return self.current_blog
 
@@ -192,8 +190,8 @@ class Controller:
         Returns: None
         """
         if not self.is_logged_in:
-            print("must be logged in to unset current blog")
-            return None
+            raise_exception(IllegalAccessException, "must be logged in to unset blog")
+
 
         self.current_blog = None
 
