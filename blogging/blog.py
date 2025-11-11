@@ -1,5 +1,5 @@
 from blogging.post import Post
-
+from typing import * 
 from datetime import datetime
 from blogging.__init__ import binary_search
 
@@ -50,7 +50,7 @@ class Blog:
         self.posts.append(new_post)
         return new_post
 
-    def search_post(self, code: int) -> Post | None:
+    def search_post(self, code: int) -> Union[Post, None]:
         """
         Searches for a post given its unique code.
         Args: code (int): the unique code of the post to search for
@@ -70,7 +70,7 @@ class Blog:
         ]
         return filtered_list
 
-    def update_post(self, code: int, title: str, text: str) -> Post | None:
+    def update_post(self, code: int, title: str, text: str) -> Union[Post,None]:
         """
         Updates the a post given the unique code
 
