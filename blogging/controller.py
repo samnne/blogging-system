@@ -76,15 +76,15 @@ class Controller:
 
         return new_blog
 
-    def retrieve_blogs(self, name: str) -> Union[list[Blog], None]:
+    def retrieve_blogs(self, name: str) -> list[Blog]:
         """
         Retrieve blogs whose name contains the given filter string.
 
         Args: name (str): The fuzzy find filter string
+        Returns list of blogs or raises an error
         """
         if not self.is_logged_in:
-            print("must be logged in to search blogs")
-            return None
+            raise_exception(IllegalAccessException, "must be logged in to search blogs")
 
         filtered_blogs: list[Blog] = [blog for blog in self.blogs if name in blog.name]
         return filtered_blogs
@@ -102,11 +102,11 @@ class Controller:
                 url (str): New URL of the blog
                 email (str): New contact email for the blog
         Returns: True if update was successful, False if blog not found,
-        None if not logged in
+        throws an error if not logged in
         """
         if not self.is_logged_in:
-            print("must be logged in to update a blog")
-            return None
+            
+            raise_exception(IllegalAccessException, "must be logged in to update a blog")
 
         if self.current_blog and self.current_blog.id == search_id:
             return None
