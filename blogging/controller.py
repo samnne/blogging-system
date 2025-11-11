@@ -1,12 +1,19 @@
 from blogging.blog import Blog
 from blogging.post import Post
-from blogging.__init__ import binary_search
+from blogging.__init__ import binary_search, get_password_hash
+from blogging.exception.invalid_login_exception import InvalidLoginException
+from blogging.exception.invalid_logout_exception import InvalidLogoutException
+from blogging.exception.duplicate_login_exception import DuplicateLoginException
 
 
 class Controller:
 
     def __init__(self) -> None:
-        self.user: dict[str, str] = {"username": "user", "password": "blogging2025"}
+        self.user: dict[str, str] = {
+            "user": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+            "ali": "6394ffec21517605c1b426d43e6fa7eb0cff606ded9c2956821c2c36bfee2810",
+            "kala": "e5268ad137eec951a48a5e5da52558c7727aaa537c8b308b5e403e6b434e036e"
+        }
         self.is_logged_in: bool = False
         self.blogs: list[Blog] = []
         self.current_blog: Blog | None = None
@@ -15,21 +22,20 @@ class Controller:
     def login(self, username: str, password: str) -> bool | None:
         if self.is_logged_in:
             print("cannot login again while still logged in")
-            return None
+            raise DuplicateLoginException
 
-        if self.user["username"] != username:
-            return False
-
-        if self.user["password"] != password:
-            return False
-
-        self.is_logged_in = True
-        return True
+        for key,value in self.user.items():
+            if key == username and value == get_password_hash(password=password):
+                self.is_logged_in = True
+                return True
+        
+        raise InvalidLoginException
+      
 
     def logout(self):
         if not self.is_logged_in:
             print("log out only after being logged in")
-            return
+            raise InvalidLogoutException
 
         self.is_logged_in = False
         return True
@@ -302,4 +308,6 @@ class Controller:
 
         return self.current_blog.list_posts()
 
-
+if __name__ == "__main__":
+    controller = Controller()
+    controller.login("user", "")
