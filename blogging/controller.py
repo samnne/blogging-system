@@ -117,7 +117,7 @@ class Controller:
 
         if new_id != search_id and self.search_blog(new_id):
             raise_exception(IllegalOperationException, "cannot update one blog with conflicting ID")
-        blog_to_update.set_values(id=new_id, name=name, url=url, email=email)
+        blog_to_update.set_values(id=new_id, name=name, url=url, email=email) # type: ignore
         return True
 
     def delete_blog(self, id: int) -> Union[bool, None]:
@@ -130,16 +130,14 @@ class Controller:
         """
 
         if not self.is_logged_in:
-            print("must be logged in to delete a blog")
-            return None
+            raise_exception(IllegalAccessException, "must be logged in to delete a blog")
 
         if self.current_blog and self.current_blog.id == id:
-            return None
+            raise_exception(IllegalOperationException, "Cannot delete current Blog")
 
         blog_to_delete = self.search_blog(id)
         if not blog_to_delete:
-            print("blog with given id does not exist")
-            return False
+            raise_exception(IllegalOperationException, "cannot delete a blog that doesnt exist")
 
         self.blogs = [blog for blog in self.blogs if blog.id != id]
         return True
