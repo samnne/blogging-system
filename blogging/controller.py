@@ -5,8 +5,10 @@ from blogging.__init__ import binary_search, get_password_hash, raise_exception
 from blogging.exception.invalid_login_exception import InvalidLoginException
 from blogging.exception.invalid_logout_exception import InvalidLogoutException
 from blogging.exception.duplicate_login_exception import DuplicateLoginException
+from blogging.exception.illegal_access_exception import IllegalAccessException
+from blogging.exception.illegal_operation_exception import IllegalOperationException
 
-from typing import Union
+
 class Controller:
 
     def __init__(self) -> None:
@@ -29,12 +31,7 @@ class Controller:
                 self.is_logged_in = True
                 return True
         
-        raise InvalidLoginException
-
-
-
-      
-
+        raise InvalidLoginException      
     def logout(self):
         if not self.is_logged_in:
             raise_exception(InvalidLogoutException, "Can't log out if not logged in")
@@ -51,8 +48,8 @@ class Controller:
         """
 
         if not self.is_logged_in:
-            print("must be logged in to search blogs")
-            return None
+            
+            raise_exception(IllegalAccessException, "must be logged in to search blogs")
 
         sorted_blogs: list[Blog] = sorted(self.blogs, key=lambda blog: blog.id)
         return binary_search(sorted_blogs, id)
@@ -70,12 +67,10 @@ class Controller:
         Returns: The created Blog or None if creation failed
         """
         if not self.is_logged_in:
-            print("must be logged in to create a blog")
-            return None
+            raise_exception(IllegalAccessException, "must be logged in to create a blog")
 
         if self.search_blog(id):
-            print("blog with given id already exists")
-            return None
+            raise_exception(IllegalOperationException, "blog with given id already exists")
         new_blog: Blog = Blog(id, name, url, email)
         self.blogs.append(new_blog)
 
