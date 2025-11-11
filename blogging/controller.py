@@ -145,11 +145,7 @@ class Controller:
         self.blogs = [blog for blog in self.blogs if blog.id != id]
         return True
 
-<<<<<<< HEAD
-    def list_blogs(self) -> Union[list[Blog], None]:
-=======
     def list_blogs(self) -> Union[list[Blog] ,None]:
->>>>>>> 70d21ba (last commit)
         """
         List all blogs in the system.
         Args: None
@@ -177,11 +173,7 @@ class Controller:
 
         self.current_blog = search_blog
 
-<<<<<<< HEAD
-    def get_current_blog(self) -> Union[Blog, None]:
-=======
     def get_current_blog(self) -> Union[Blog,None]:
->>>>>>> 70d21ba (last commit)
         """
         Gets the current blog
         Args: None
