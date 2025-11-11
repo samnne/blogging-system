@@ -1,4 +1,5 @@
 import hashlib
+from typing import Type
 def binary_search(arr, target):
     left, right = 0, len(arr) - 1
 
@@ -29,3 +30,7 @@ def get_password_hash(password):
     hex_dig = hash_object.hexdigest()       # Get the hexadecimal digest of the hashed password
     return hex_dig
 
+
+def raise_exception(exception: Type[Exception], msg:str = ""):
+    print(msg)
+    raise exception
