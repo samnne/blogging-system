@@ -149,8 +149,7 @@ class Controller:
         Returns: a list of all the blogs in the system.
         """
         if not self.is_logged_in:
-            print("must be logged in to list blogs")
-            return None
+            raise_exception(IllegalAccessException, "can't list blogs when not logged in")
         return self.blogs
 
     def set_current_blog(self, id: int) -> None:
