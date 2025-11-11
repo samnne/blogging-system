@@ -1,3 +1,5 @@
+import hashlib
+from typing import Type
 def binary_search(arr, target):
     left, right = 0, len(arr) - 1
 
@@ -21,3 +23,15 @@ def binary_search(arr, target):
             right = mid - 1
     return None
 
+def get_password_hash(password):
+    # Learn a bit about password hashes by reading this code
+    encoded_password = password.encode('utf-8')     # Convert the password to bytes
+    hash_object = hashlib.sha256(encoded_password)      # Choose a hashing algorithm (e.g., SHA-256)
+    hex_dig = hash_object.hexdigest()       # Get the hexadecimal digest of the hashed password
+    return hex_dig
+
+
+def raise_exception(exception: Type[Exception], msg: str = ""):
+    # Middleware to raise exceptions
+    print(msg)
+    raise exception
