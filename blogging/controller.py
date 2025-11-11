@@ -7,7 +7,7 @@ from blogging.exception.invalid_logout_exception import InvalidLogoutException
 from blogging.exception.duplicate_login_exception import DuplicateLoginException
 from blogging.exception.illegal_access_exception import IllegalAccessException
 from blogging.exception.illegal_operation_exception import IllegalOperationException
-
+from blogging.exception.no_current_blog_exception import NoCurrentBlogException
 
 class Controller:
 
@@ -206,12 +206,10 @@ class Controller:
         """
 
         if not self.is_logged_in:
-            print("must be logged in to get current blog")
-            return None
+            raise_exception(IllegalAccessException, "can't create a post without being logged in")
 
         if not self.current_blog:
-            print("No current blog set")
-            return None
+            raise_exception(NoCurrentBlogException, "No current blog set")
 
         return self.current_blog.create_post(title=title, text=text)
 
@@ -221,12 +219,12 @@ class Controller:
         """
 
         if not self.is_logged_in:
-            print("must be logged in to get current blog")
-            return None
+            raise_exception(IllegalAccessException, "can't search a post without being logged in")
+
 
         if not self.current_blog:
-            print("No current blog set")
-            return None
+            raise_exception(NoCurrentBlogException, "No current blog set")
+
 
         return self.current_blog.search_post(code)
 
@@ -238,12 +236,12 @@ class Controller:
         Returns a list of all posts that contain that text in the post
         """
         if not self.is_logged_in:
-            print("must be logged in to get current blog")
-            return None
+            raise_exception(IllegalAccessException, "can't retrieve posts without being logged in")
+
 
         if not self.current_blog:
-            print("No current blog set")
-            return None
+            raise_exception(NoCurrentBlogException, "No current blog set")
+
 
         return self.current_blog.retrieve_posts(text)
 
@@ -257,12 +255,13 @@ class Controller:
         Returns the updated post or None if not found
         """
         if not self.is_logged_in:
-            print("must be logged in to get current blog")
-            return None
+            raise_exception(IllegalAccessException, "can't update a post without being logged in")
+
+
 
         if not self.current_blog:
-            print("No current blog set")
-            return None
+            raise_exception(NoCurrentBlogException, "No current blog set")
+
 
         return self.current_blog.update_post(code, title, text)
 
@@ -274,12 +273,13 @@ class Controller:
         Returns True if deleted, False if not found, None if not logged in or no current blog
         """
         if not self.is_logged_in:
-            print("must be logged in to get current blog")
-            return None
+            raise_exception(IllegalAccessException, "can't delete a post without being logged in")
+
+
 
         if not self.current_blog:
-            print("No current blog set")
-            return None
+            raise_exception(NoCurrentBlogException, "No current blog set")
+
 
         return self.current_blog.delete_post(code)
 
@@ -291,12 +291,13 @@ class Controller:
 
         """
         if not self.is_logged_in:
-            print("must be logged in to get current blog")
-            return None
+            raise_exception(IllegalAccessException, "can't list posts without being logged in")
+
+
 
         if not self.current_blog:
-            print("No current blog set")
-            return None
+            raise_exception(NoCurrentBlogException, "No current blog set")
+
 
         return self.current_blog.list_posts()
 
