@@ -1,5 +1,6 @@
+from blogging.dao.post_dao import PostDAOPickle
 from blogging.post import Post
-from typing import * 
+from typing import *
 from datetime import datetime
 from blogging.__init__ import binary_search
 
@@ -8,6 +9,8 @@ class Blog:
     def __init__(self, id: int, name: str, url: str, email: str) -> None:
         # the unique ID of the blog
         self.id: int = id
+
+        self.postPickle = PostDAOPickle()
 
         # blog data
         self.name: str = name
@@ -45,18 +48,16 @@ class Blog:
         Returns the newly created post
         """
 
-        new_code: int = len(self.posts) + 1
-        new_post: Post = Post(new_code, title, text)
-        self.posts.append(new_post)
-        return new_post
+        new_post: Post = Post(0, title, text)
+        return self.postPickle.create_post(new_post)
 
-    def search_post(self, code: int) -> Union[Post, None]:
+    def search_post(self, code: int):
         """
         Searches for a post given its unique code.
         Args: code (int): the unique code of the post to search for
         Returns the post if found, or None if no post with given code exists
         """
-        return binary_search(self.posts, code)
+        return self.postPickle.search_post(code)
 
     def retrieve_posts(self, text: str) -> list[Post]:
         """
@@ -65,10 +66,7 @@ class Blog:
 
         Returns a list of all posts that contain the search query in the title or text
         """
-        filtered_list: list[Post] = [
-            post for post in self.posts if text in post.title or text in post.text
-        ]
-        return filtered_list
+        return self.postPickle.retrieve_posts(search_string=text)
 
     def update_post(self, code: int, title: str, text: str) -> Post:
         """
