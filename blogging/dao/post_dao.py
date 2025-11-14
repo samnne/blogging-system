@@ -54,10 +54,23 @@ class PostDAOPickle(PostDAO):
         return filtered_list
 
     def update_post(self, key, new_title, new_text):
-        pass
+        post: Post | None = self.search_post(key)
+        if post:
+            post.set_values(new_title, new_text)
+            return post
+        return None
 
     def delete_post(self, key):
-        pass
+        post_to_delete = self.search_post(key)
+
+        if not post_to_delete:
+            print("post with given code does not exist")
+            return False
+
+        self.posts = [post for post in self.posts if post.code != key]
+
+        return True
 
     def list_posts(self):
-        pass
+        post_in_reverse: list[Post] = self.posts[::-1]
+        return post_in_reverse

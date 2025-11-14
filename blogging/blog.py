@@ -77,11 +77,7 @@ class Blog:
                 text (str): the new text of the post
         Returns the updated post if successful, or None if no post was found
         """
-        post: Post | None = self.search_post(code)
-        if post:
-            post.set_values(title, text)
-            return post
-        return None
+        return self.postPickle.update_post(code, title, text)
 
     def delete_post(self, code: int) -> bool:
         """
@@ -92,14 +88,7 @@ class Blog:
         Return True if the post was successfully deleted,
         or False if no post with given code exists
         """
-        post_to_delete: Post | None = self.search_post(code)
-
-        if not post_to_delete:
-            print("post with given code does not exist")
-            return False
-
-        self.posts = [post for post in self.posts if post.code != code]
-        return True
+        return self.postPickle.delete_post(code)
 
     def list_posts(self) -> list[Post]:
         """
@@ -110,9 +99,7 @@ class Blog:
         Returns a list of all posts in the blog
         ordered from most recently created to oldest.
         """
-        # Return posts in reverse order from given creation date
-        post_in_reverse: list[Post] = self.posts[::-1]
-        return post_in_reverse
+        return self.postPickle.list_posts()
 
     def __eq__(self, other):
         return (
