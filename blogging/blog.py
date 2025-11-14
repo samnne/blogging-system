@@ -70,7 +70,7 @@ class Blog:
         ]
         return filtered_list
 
-    def update_post(self, code: int, title: str, text: str) -> Union[Post,None]:
+    def update_post(self, code: int, title: str, text: str) -> Post:
         """
         Updates the a post given the unique code
 
