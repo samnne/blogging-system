@@ -146,7 +146,7 @@ class Controller:
             raise_exception(
                 IllegalAccessException, "can't list blogs when not logged in"
             )
-        return self.blogs
+        return self.blogJSON.list_blogs()
 
     def set_current_blog(self, id: int) -> None:
         """
