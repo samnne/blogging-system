@@ -87,7 +87,19 @@ class BlogDAOJSON(BlogDAO):
         Returns: True if update was successful, False if blog not found,
         throws an error if not logged in
         """
-        blog.set_values(id=key, name=blog.name, url=blog.url, email=blog.email)  # type: ignore
+
+        blog_to_update = self.search_blog(key)
+        if not blog_to_update:
+            raise_exception(
+                IllegalOperationException, "cannot update blog that doesnt exist"
+            )
+
+        if blog.id != key and self.search_blog(blog.id):
+            raise_exception(
+                IllegalOperationException, "cannot update one blog with conflicting ID"
+            )
+
+        blog_to_update.set_values(id=blog.id, name=blog.name, url=blog.url, email=blog.email)  # type: ignore
         return True
 
     def delete_blog(self, id: int) -> bool:

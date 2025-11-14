@@ -114,17 +114,9 @@ class Controller:
         if self.current_blog and self.current_blog.id == search_id:
             raise_exception(IllegalOperationException, "cannot update current blog")
 
-        blog_to_update = self.search_blog(search_id)
-        if not blog_to_update:
-            raise_exception(
-                IllegalOperationException, "cannot update blog that doesnt exist"
-            )
-
-        if new_id != search_id and self.search_blog(new_id):
-            raise_exception(
-                IllegalOperationException, "cannot update one blog with conflicting ID"
-            )
-        return self.blogJSON.update_blog(key=search_id, blog=blog_to_update)
+        return self.blogJSON.update_blog(
+            key=search_id, blog=Blog(new_id, name, url, email)
+        )
 
     def delete_blog(self, id: int) -> bool:
         """
