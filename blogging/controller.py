@@ -89,10 +89,7 @@ class Controller:
         if not self.is_logged_in:
             raise_exception(IllegalAccessException, "must be logged in to search blogs")
 
-        filtered_blogs: list[Blog] = [
-            blog for blog in self.blogs if search_string in blog.name
-        ]
-        return filtered_blogs
+        return self.blogJSON.retrieve_blogs(search_string)
 
     def update_blog(
         self, search_id, new_id: int, name: str, url: str, email: str
@@ -127,8 +124,7 @@ class Controller:
             raise_exception(
                 IllegalOperationException, "cannot update one blog with conflicting ID"
             )
-        blog_to_update.set_values(id=new_id, name=name, url=url, email=email)  # type: ignore
-        return True
+        return self.blogJSON.update_blog(key=search_id, blog=blog_to_update)
 
     def delete_blog(self, id: int) -> bool:
         """
