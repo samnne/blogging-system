@@ -80,10 +80,7 @@ class BlogDAOJSON(BlogDAO):
         Update the blog with the given ID using the provided parameters.
         Only non-empty parameters will be used to update the blog.
 
-        Args: id (int): Unique ID for the blog to be updated
-                name (str): New name of the blog
-                url (str): New URL of the blog
-                email (str): New contact email for the blog
+        Args: key: unique ID, and blog: new Blog
         Returns: True if update was successful, False if blog not found,
         throws an error if not logged in
         """
@@ -102,30 +99,21 @@ class BlogDAOJSON(BlogDAO):
         blog_to_update.set_values(id=blog.id, name=blog.name, url=blog.url, email=blog.email)  # type: ignore
         return True
 
-    def delete_blog(self, id: int) -> bool:
+    def delete_blog(self, key: int) -> bool:
         """
         Delete the blog by ID
 
-        Args: id (int): Unique ID for the blog to be deleted
+        Args: key (int): Unique ID for the blog to be deleted
         Returns: True if deletion was successful, False if blog not found,
         None if not logged in
         """
-
-        if not self.is_logged_in:
-            raise_exception(
-                IllegalAccessException, "must be logged in to delete a blog"
-            )
-
-        if self.current_blog and self.current_blog.id == id:
-            raise_exception(IllegalOperationException, "Cannot delete current Blog")
-
-        blog_to_delete = self.search_blog(id)
+        blog_to_delete = self.search_blog(key)
         if not blog_to_delete:
             raise_exception(
                 IllegalOperationException, "cannot delete a blog that doesnt exist"
             )
 
-        self.blogs = [blog for blog in self.blogs if blog.id != id]
+        self.blogs = [blog for blog in self.blogs if blog.id != key]
         return True
 
     def list_blogs(self) -> list[Blog]:

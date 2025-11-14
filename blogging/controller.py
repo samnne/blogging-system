@@ -134,15 +134,7 @@ class Controller:
 
         if self.current_blog and self.current_blog.id == id:
             raise_exception(IllegalOperationException, "Cannot delete current Blog")
-
-        blog_to_delete = self.search_blog(id)
-        if not blog_to_delete:
-            raise_exception(
-                IllegalOperationException, "cannot delete a blog that doesnt exist"
-            )
-
-        self.blogs = [blog for blog in self.blogs if blog.id != id]
-        return True
+        return self.blogJSON.delete_blog(id)
 
     def list_blogs(self) -> list[Blog]:
         """
@@ -310,4 +302,7 @@ class Controller:
 
 if __name__ == "__main__":
     controller = Controller()
-    controller.login("user", "")
+    controller.login("user", "123456")
+    controller.create_blog(1, "sam", "new_sam", "fwf")
+
+    controller.delete_blog(1)
