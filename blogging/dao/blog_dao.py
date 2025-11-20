@@ -45,12 +45,9 @@ class BlogDAOJSON(BlogDAO):
             file_data = file.read()
             self.blogs = [] if not file_data else json.loads(file_data, cls=BlogDecoder)
             file.close()
-        except Exception as FileError:
-            print(FileError)
-            file = open(self.blogs_file, "w")
-            json_string = json.dumps(self.blogs, indent=4)
-            file.write(json_string)
-            file.close()
+        except FileNotFoundError as FileError:
+            print(f"FILE ERROR ###{FileError}###")
+            json_update_file(self.blogs, self.blogs_file, Encoder=BlogEncoder)
 
     def search_blog(self, key: int):
         """

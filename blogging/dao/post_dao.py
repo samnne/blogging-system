@@ -36,21 +36,24 @@ class PostDAOPickle(PostDAO):
 
     def __init__(self, blog):
 
-        self.posts = []
         self.autosave = Configuration.autosave
+        self.blog = blog
         self.blog_records_file = (
-            Configuration.records_path + f"/{blog.id}" + Configuration.records_extension
+            Configuration.records_path
+            + f"/{self.blog.id}"
+            + Configuration.records_extension
         )
         self.posts: list[Post] = []
-        try:
-            file = open(self.blog_records_file, "rb")
-            self.posts = [] if len(file.readlines()) < 2 else pickle.load(file)
-            file.close()
-        except Exception:
-            print("file error")
-            file = open(self.blog_records_file, "wb")
-            pickle.dump(self.posts, file)
-            file.close()
+        if self.autosave:
+
+            try:
+                with open(self.blog_records_file, "rb") as file:
+                    self.posts = pickle.load(file)
+                    if self.posts:
+                        self.blog.counter = self.posts[-1].code
+            except Exception as e:
+                print(f"file error {e}")
+                pickle_update_file(self.posts, self.blog_records_file)
 
     def search_post(self, key: int):  # type: ignore
         """
@@ -62,7 +65,8 @@ class PostDAOPickle(PostDAO):
         """
         DAO implementaion of create_post
         """
-        post.code = len(self.posts) + 1
+        self.blog.counter += 1
+        post.code = self.blog.counter
         self.posts.append(post)
         if self.autosave:
             pickle_update_file(self.posts, self.blog_records_file)
@@ -88,19 +92,24 @@ class PostDAOPickle(PostDAO):
         post = self.search_post(key)
         if post:
             post.set_values(new_title, new_text)
+            if self.autosave:
+                pickle_update_file(self.posts, self.blog_records_file)
             return post
         return None
 
-    def delete_post(self, key: int):  # type: ignore
-
-        post_to_delete: Post = self.search_post(key)  # type: ignore
+    def delete_post(self, key: int):
+        post_to_delete = self.search_post(key)
 
         if not post_to_delete:
             print("post with given code does not exist")
             return False
 
+        self.blog.counter -= 1
+
         self.posts = [post for post in self.posts if post.code != key]
 
+        if self.autosave:
+            pickle_update_file(self.posts, self.blog_records_file)
         return True
 
     def list_posts(self):  # type: ignore

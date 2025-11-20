@@ -26,6 +26,7 @@ class Controller:
                 pass_hash: str
                 user, pass_hash = line.strip().split(",")
                 self.user[user] = pass_hash
+            file.close()
         except Exception:
             print("Error handling file")
 

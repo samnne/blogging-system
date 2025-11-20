@@ -7,14 +7,14 @@ class Blog:
         # the unique ID of the blog
         self.id: int = id
 
+        self.counter = 0
+
         self.postPickle = PostDAOPickle(self)
 
         # blog data
         self.name: str = name
         self.url: str = url
         self.email: str = email
-
-        # list of posts in the blog
 
     def set_values(self, id: int, name: str, url: str, email: str) -> None:
         """
@@ -85,6 +85,7 @@ class Blog:
         Return True if the post was successfully deleted,
         or False if no post with given code exists
         """
+
         return self.postPickle.delete_post(code)
 
     def list_posts(self) -> list[Post]:

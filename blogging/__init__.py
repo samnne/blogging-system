@@ -5,7 +5,12 @@ import json
 
 
 def json_update_file(payload, dest_file, Encoder):
-    """ """
+    """
+    Function to correctly update the json files given a payload
+    Args: payload (str): the data to be loading into the .json file
+            dest_file: the destination file
+            Encoder: the encoder to save the data
+    """
     try:
         file = open(dest_file, "w")
         j_string = json.dumps(payload, indent=4, cls=Encoder)
@@ -16,11 +21,16 @@ def json_update_file(payload, dest_file, Encoder):
 
 
 def pickle_update_file(payload, dest_file):
-    """ """
+    """
+    Takes in a payload and saves it in binary,
+    using the pickle library
+    Args:
+        payload: the data to be converted to binary given
+        dest_file: the destination file
+    """
     try:
-        file = open(dest_file, "wb")
-        pickle.dump(payload, file)
-        file.close()
+        with open(dest_file, "wb") as file:
+            pickle.dump(payload, file)
     except Exception as e:
         print(f"Error Writing to File, {e}")
 
