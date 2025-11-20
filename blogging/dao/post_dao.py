@@ -35,16 +35,27 @@ class PostDAOPickle(PostDAO):
     def __init__(self):
         self.posts = []
 
-    def search_post(self, key):
-
+    def search_post(self, key: int):
+        """
+        DAO implementaion of search_post
+        """
         return binary_search(self.posts, key)
 
-    def create_post(self, post):
+    def create_post(self, post: Post):
+        """
+        DAO implementaion of create_post
+        """
         post.code = len(self.posts) + 1
         self.posts.append(post)
         return post
 
-    def retrieve_posts(self, search_string):
+    def retrieve_posts(self, search_string: str):
+        """
+        Retrieves all the post given a text search string
+
+        Args: search_string (str), the text to find
+        Returns a list of all posts that contain that text in the post
+        """
         filtered_list: list[Post] = [
             post
             for post in self.posts
@@ -53,15 +64,15 @@ class PostDAOPickle(PostDAO):
 
         return filtered_list
 
-    def update_post(self, key, new_title, new_text):
-        post: Post | None = self.search_post(key)
+    def update_post(self, key: int, new_title: str, new_text: str):
+        post = self.search_post(key)
         if post:
             post.set_values(new_title, new_text)
             return post
         return None
 
-    def delete_post(self, key):
-        post_to_delete = self.search_post(key)
+    def delete_post(self, key: int):
+        post_to_delete: Post = self.search_post(key)
 
         if not post_to_delete:
             print("post with given code does not exist")

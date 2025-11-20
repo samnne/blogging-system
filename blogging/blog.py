@@ -1,6 +1,5 @@
 from blogging.dao.post_dao import PostDAOPickle
 from blogging.post import Post
-from typing import *
 from datetime import datetime
 from blogging.__init__ import binary_search
 

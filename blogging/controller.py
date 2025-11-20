@@ -1,8 +1,8 @@
-from typing import Union
 from blogging.blog import Blog
 from blogging.post import Post
 from blogging.dao.blog_dao import BlogDAOJSON
 from blogging.__init__ import get_password_hash, raise_exception
+from blogging.configuration import Configuration
 from blogging.exception.invalid_login_exception import InvalidLoginException
 from blogging.exception.invalid_logout_exception import InvalidLogoutException
 from blogging.exception.duplicate_login_exception import DuplicateLoginException
@@ -14,11 +14,20 @@ from blogging.exception.no_current_blog_exception import NoCurrentBlogException
 class Controller:
 
     def __init__(self) -> None:
-        self.user: dict[str, str] = {
-            "user": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
-            "ali": "6394ffec21517605c1b426d43e6fa7eb0cff606ded9c2956821c2c36bfee2810",
-            "kala": "e5268ad137eec951a48a5e5da52558c7727aaa537c8b308b5e403e6b434e036e",
-        }
+
+        self.configuration = Configuration()
+
+        self.user: dict[str, str] = {}
+        try:
+            file = open(self.configuration.users_file, "r")
+            content = file.readlines()
+            for line in content:
+                user: str
+                pass_hash: str
+                user, pass_hash = line.strip().split(",")
+                self.user[user] = pass_hash
+        except Exception:
+            print("Error handling file")
 
         self.is_logged_in: bool = False
         self.blogs: list[Blog] = []
@@ -30,12 +39,15 @@ class Controller:
         if self.is_logged_in:
             raise_exception(exception=DuplicateLoginException)
 
-        for key, value in self.user.items():
-            if key == username and value == get_password_hash(password=password):
+        if self.user.get(username):
+            pass_hash = get_password_hash(password)
+            if self.user[username] == pass_hash:
                 self.is_logged_in = True
                 return True
-
-        raise InvalidLoginException
+            else:
+                raise_exception(InvalidLoginException, "Bad Login Credentials")
+        else:
+            raise InvalidLoginException
 
     def logout(self):
         if not self.is_logged_in:
@@ -45,7 +57,7 @@ class Controller:
         return True
 
     # CRUD FOR BLOG'S GIVEN A CURRENT USER
-    def search_blog(self, id: int) -> Union[Blog, None]:
+    def search_blog(self, id: int):
         """
         Search for a blog by its unique ID.
         Args: id (int): Unique ID of the blog to search for
@@ -167,7 +179,7 @@ class Controller:
 
         self.current_blog = search_blog  # type: ignore
 
-    def get_current_blog(self) -> Union[Blog, None]:
+    def get_current_blog(self):
         """
         Gets the current blog
         Args: None
@@ -229,7 +241,7 @@ class Controller:
 
         return self.current_blog.search_post(code)
 
-    def retrieve_posts(self, text: str) -> Union[list[Post], None]:
+    def retrieve_posts(self, text: str):
         """
         Retrieves all the post given a text search string
 

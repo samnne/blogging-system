@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
+import json
 from typing import Union
-
-from blogging import binary_search, raise_exception
+from blogging.configuration import Configuration
+from blogging import binary_search, update_file, raise_exception
 from blogging.blog import Blog
+from blogging.dao.blog_encoder_decoder import BlogDecoder, BlogEncoder
 from blogging.exception.illegal_access_exception import IllegalAccessException
 from blogging.exception.illegal_operation_exception import IllegalOperationException
 
@@ -36,8 +38,23 @@ class BlogDAO(ABC):
 
 class BlogDAOJSON(BlogDAO):
     def __init__(self):
-        self.posts = []
+        self.configuration = Configuration()
+        self.autosave = self.configuration.autosave
+        self.blogs_file = self.configuration.blogs_file
         self.blogs = []
+        try:
+            file = open(self.blogs_file, "r")
+            file_data = file.read()
+            self.blogs = [] if not file_data else json.loads(file_data, cls=BlogDecoder)
+
+            print(self.blogs)
+            file.close()
+        except Exception as FileError:
+            print(FileError)
+            file = open(self.blogs_file, "w")
+            json_string = json.dumps(self.blogs, indent=4)
+            file.write(json_string)
+            file.close()
 
     def search_blog(self, key: int):
         """
@@ -46,6 +63,7 @@ class BlogDAOJSON(BlogDAO):
         Returns: the Blog if found, or None if not found
         """
 
+        print(self.blogs)
         sorted_blogs: list[Blog] = sorted(self.blogs, key=lambda blog: blog.id)
         return binary_search(sorted_blogs, key)
 
@@ -61,6 +79,11 @@ class BlogDAOJSON(BlogDAO):
         Returns: The created Blog or None if creation failed
         """
         self.blogs.append(blog)
+        if self.configuration.autosave:
+            update_file(
+                payload=self.blogs, dest_file=self.blogs_file, Encoder=BlogEncoder
+            )
+
         return blog
 
     def retrieve_blogs(self, search_string: str) -> list[Blog]:
@@ -142,3 +165,9 @@ class BlogDAOJSON(BlogDAO):
             )
 
         self.current_blog = search_blog  # type: ignore
+
+
+if __name__ == "__main__":
+    blogj = BlogDAOJSON()
+
+    blogj.create_blog(Blog(1, "s", "s", "s"))
