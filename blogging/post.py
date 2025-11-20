@@ -11,12 +11,13 @@ class Post:
         self.text: str = text
 
         # Timestamps for creation and last update, stored as tuples (year, month, day, hour, minute)
+        now = datetime.now()
         current_date = (
-            datetime.year,
-            datetime.month,
-            datetime.day,
-            datetime.hour,
-            datetime.minute,
+            now.year,
+            now.month,
+            now.day,
+            now.hour,
+            now.minute,
         )
 
         self.creation: tuple = current_date
@@ -30,12 +31,13 @@ class Post:
                 text (str): the new text for the post
         Returns None
         """
+        now = datetime.now()
         updated_date = (
-            datetime.year,
-            datetime.month,
-            datetime.day,
-            datetime.hour,
-            datetime.minute,
+            now.year,
+            now.month,
+            now.day,
+            now.hour,
+            now.minute,
         )
 
         self.title = title

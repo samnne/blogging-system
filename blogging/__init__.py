@@ -1,14 +1,25 @@
 import hashlib
+import pickle
 from typing import Type
 import json
 
 
-def update_file(payload, dest_file, Encoder):
+def json_update_file(payload, dest_file, Encoder):
     """ """
     try:
         file = open(dest_file, "w")
         j_string = json.dumps(payload, indent=4, cls=Encoder)
         file.write(j_string)
+        file.close()
+    except Exception as e:
+        print(f"Error Writing to File, {e}")
+
+
+def pickle_update_file(payload, dest_file):
+    """ """
+    try:
+        file = open(dest_file, "wb")
+        pickle.dump(payload, file)
         file.close()
     except Exception as e:
         print(f"Error Writing to File, {e}")

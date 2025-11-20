@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 import json
-from typing import Union
 from blogging.configuration import Configuration
-from blogging import binary_search, update_file, raise_exception
+from blogging.__init__ import binary_search, json_update_file, raise_exception
 from blogging.blog import Blog
 from blogging.dao.blog_encoder_decoder import BlogDecoder, BlogEncoder
 from blogging.exception.illegal_access_exception import IllegalAccessException
@@ -38,16 +37,13 @@ class BlogDAO(ABC):
 
 class BlogDAOJSON(BlogDAO):
     def __init__(self):
-        self.configuration = Configuration()
-        self.autosave = self.configuration.autosave
-        self.blogs_file = self.configuration.blogs_file
+        self.autosave = Configuration.autosave
+        self.blogs_file = Configuration.blogs_file
         self.blogs = []
         try:
             file = open(self.blogs_file, "r")
             file_data = file.read()
             self.blogs = [] if not file_data else json.loads(file_data, cls=BlogDecoder)
-
-            print(self.blogs)
             file.close()
         except Exception as FileError:
             print(FileError)
@@ -63,7 +59,6 @@ class BlogDAOJSON(BlogDAO):
         Returns: the Blog if found, or None if not found
         """
 
-        print(self.blogs)
         sorted_blogs: list[Blog] = sorted(self.blogs, key=lambda blog: blog.id)
         return binary_search(sorted_blogs, key)
 
@@ -79,8 +74,8 @@ class BlogDAOJSON(BlogDAO):
         Returns: The created Blog or None if creation failed
         """
         self.blogs.append(blog)
-        if self.configuration.autosave:
-            update_file(
+        if self.autosave:
+            json_update_file(
                 payload=self.blogs, dest_file=self.blogs_file, Encoder=BlogEncoder
             )
 
@@ -120,6 +115,8 @@ class BlogDAOJSON(BlogDAO):
             )
 
         blog_to_update.set_values(id=blog.id, name=blog.name, url=blog.url, email=blog.email)  # type: ignore
+        if self.autosave:
+            json_update_file(self.blogs, self.blogs_file, Encoder=BlogEncoder)
         return True
 
     def delete_blog(self, key: int) -> bool:
@@ -137,6 +134,8 @@ class BlogDAOJSON(BlogDAO):
             )
 
         self.blogs = [blog for blog in self.blogs if blog.id != key]
+        if self.autosave:
+            json_update_file(self.blogs, self.blogs_file, Encoder=BlogEncoder)
         return True
 
     def list_blogs(self) -> list[Blog]:

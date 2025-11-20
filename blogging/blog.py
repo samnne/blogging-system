@@ -1,7 +1,5 @@
 from blogging.dao.post_dao import PostDAOPickle
 from blogging.post import Post
-from datetime import datetime
-from blogging.__init__ import binary_search
 
 
 class Blog:
@@ -9,7 +7,7 @@ class Blog:
         # the unique ID of the blog
         self.id: int = id
 
-        self.postPickle = PostDAOPickle()
+        self.postPickle = PostDAOPickle(self)
 
         # blog data
         self.name: str = name
@@ -17,7 +15,6 @@ class Blog:
         self.email: str = email
 
         # list of posts in the blog
-        self.posts: list[Post] = []
 
     def set_values(self, id: int, name: str, url: str, email: str) -> None:
         """
@@ -63,7 +60,8 @@ class Blog:
         Retrieves all posts given a search text.
         Args: text (str): the text to find in posts
 
-        Returns a list of all posts that contain the search query in the title or text
+        Returns a list of all posts that contain
+        the search query in the title or text
         """
         return self.postPickle.retrieve_posts(search_string=text)
 
@@ -76,7 +74,7 @@ class Blog:
                 text (str): the new text of the post
         Returns the updated post if successful, or None if no post was found
         """
-        return self.postPickle.update_post(code, title, text)
+        return self.postPickle.update_post(code, title, text)  # type: ignore
 
     def delete_post(self, code: int) -> bool:
         """
@@ -112,4 +110,6 @@ class Blog:
         return f"Blog({self.id}, {self.name}, {self.url}, {self.email})"
 
     def __str__(self) -> str:
-        return f"Blog ID: {self.id}. Name: {self.name}. Website: {self.url}. Email: {self.email}"
+        return f"""Blog ID: {self.id}.
+        Name: {self.name}. Website: {self.url}.
+        Email: {self.email}"""
