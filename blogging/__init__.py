@@ -60,7 +60,6 @@ def binary_search(arr, target):
 
 
 def get_password_hash(password):
-    # Learn a bit about password hashes by reading this code
     encoded_password = password.encode("utf-8")  # Convert the password to bytes
     hash_object = hashlib.sha256(
         encoded_password
