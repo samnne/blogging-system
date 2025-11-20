@@ -4,6 +4,10 @@ from blogging.blog import Blog
 
 
 class BlogEncoder(JSONEncoder):
+    """
+    The encoder to format it into the file
+    """
+
     def default(self, obj):
         if isinstance(obj, Blog):
             return {
@@ -17,6 +21,10 @@ class BlogEncoder(JSONEncoder):
 
 
 class BlogDecoder(JSONDecoder):
+    """
+    The decoder to convert the file data to Blog Objects
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(object_hook=self.object_hook, *args, **kwargs)
 

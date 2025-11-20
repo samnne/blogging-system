@@ -52,7 +52,7 @@ class BlogDAOJSON(BlogDAO):
     def search_blog(self, key: int):
         """
         Search for a blog by its unique ID.
-        Args: id (int): Unique ID of the blog to search for
+        Args: key (int): Unique ID of the blog to search for
         Returns: the Blog if found, or None if not found
         """
 
@@ -64,10 +64,7 @@ class BlogDAOJSON(BlogDAO):
         Create a New Blog with the given parameters.
         Returns None if there already exists a blog with the attempted ID.
 
-        Args: id (int): Unique ID for the blog
-                name (str): Name of the blog
-                url (str): URL of the blog
-                email (str): Contact email for the blog
+        Args: the new blog to create
         Returns: The created Blog or None if creation failed
         """
         self.blogs.append(blog)
@@ -82,7 +79,7 @@ class BlogDAOJSON(BlogDAO):
         """
         Retrieve blogs whose name contains the given filter string.
 
-        Args: name (str): The fuzzy find filter string
+        Args: search_string (str): The fuzzy find filter string
         Returns list of blogs or raises an error
         """
         filtered_blogs: list[Blog] = [
@@ -142,25 +139,6 @@ class BlogDAOJSON(BlogDAO):
         Returns: a list of all the blogs in the system.
         """
         return self.blogs
-
-    def set_current_blog(self, id: int) -> None:
-        """
-        Sets the current blog
-        Args: id (int), the unique ID of the blog to set as current
-        Returns: None
-        """
-        if not self.is_logged_in:
-            raise_exception(
-                IllegalAccessException, "must be logged in to set current blog"
-            )
-
-        search_blog: Blog | None = self.search_blog(id)
-        if not search_blog:
-            raise_exception(
-                IllegalOperationException, "cannot set a blog that doesnt exist"
-            )
-
-        self.current_blog = search_blog  # type: ignore
 
 
 if __name__ == "__main__":

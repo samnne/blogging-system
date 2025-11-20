@@ -58,12 +58,17 @@ class PostDAOPickle(PostDAO):
     def search_post(self, key: int):  # type: ignore
         """
         DAO implementaion of search_post
+        searches to find the post given current blog
+        Args: key (int) -> the unique key to search for
+        Return: The post or none if it can't be found
         """
         return binary_search(self.posts, key)
 
     def create_post(self, post: Post):  # type: ignore
         """
         DAO implementaion of create_post
+        Args: post (Post) -> the new post to be created
+        Returns the created post
         """
         self.blog.counter += 1
         post.code = self.blog.counter
