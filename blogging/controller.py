@@ -316,6 +316,6 @@ class Controller:
 if __name__ == "__main__":
     controller = Controller()
     controller.login("user", "123456")
-    controller.create_blog(1, "sam", "new_sam", "fwf")
+#controller.create_blog(1, "sam", "new_sam", "fwf")
 
-    controller.delete_blog(1)
+    

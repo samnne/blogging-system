@@ -20,9 +20,9 @@ class Post:
             now.minute,
         )
 
-        self.creation: tuple = current_date
+        self.creation_time: tuple = current_date
 
-        self.update: tuple = current_date
+        self.update_time: tuple = current_date
 
     def set_values(self, title, text):
         """
@@ -42,19 +42,19 @@ class Post:
 
         self.title = title
         self.text = text
-        self.update = updated_date
+        self.update_time = updated_date
 
     def __eq__(self, other):
         return (
             self.code == other.code
             and self.title == other.title
             and self.text == other.text
-            and self.creation == other.creation
-            and self.update == other.update
+            and self.creation_time == other.creation_time
+            and self.update_time == other.update_time
         )
 
     def __repr__(self) -> str:
-        return f"Post(Code: {self.code}, Title: {self.title}, Text: {self.text}, Created At: {self.creation}, Last Updated: {self.update})"
+        return f"Post(Code: {self.code}, Title: {self.title}, Text: {self.text}, Created At: {self.creation_time}, Last Updated: {self.update_time})"
 
     def __str__(self) -> str:
-        return f"Title: {self.title}, \nText: {self.text} \nCreated At: {self.creation} \nLast Updated: {self.update}"
+        return f"Title: {self.title}, \nText: {self.text} \nCreated At: {self.creation_time} \nLast Updated: {self.update_time}"
