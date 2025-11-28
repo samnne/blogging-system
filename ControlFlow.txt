@@ -13,14 +13,14 @@ Username Password Blah Blah
 BLOGGING SYSTEM - MAIN MENU
 
 
-1 - Add new blog
-2 - Search blog by ID
-3 - Retrieve blogs by name
-4 - Change blog data
-5 - Remove blog
-6 - List all blogs
-7 - Edit blog
-8 - Log out
+1 - Add new blog - Dialog - Done
+2 - Search blog by ID - Done
+3 - Retrieve blogs by name add UI/change table view - Not Done
+4 - Change blog data - inline edit? - Yes
+5 - Remove blog - a widget button - Yes
+6 - List all blogs - TableView - Yes
+7 - Edit blog - Set's current blog - Yes
+8 - Log out - Yes
 
 Choose your option:
 

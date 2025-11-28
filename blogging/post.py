@@ -43,6 +43,9 @@ class Post:
         self.title = title
         self.text = text
         self.update_time = updated_date
+    
+    def to_list(self):
+        return [self.code, self.title, self.text, self.creation_time, self.update_time]
 
     def __eq__(self, other):
         return (

@@ -99,6 +99,9 @@ class Blog:
         """
         return self.postPickle.list_posts()
 
+    def to_list(self):
+        return [self.id, self.name, self.email, self.url]
+
     def __eq__(self, other):
         return (
             self.id == other.id

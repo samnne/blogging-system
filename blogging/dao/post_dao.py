@@ -3,7 +3,7 @@ import pickle
 from blogging.configuration import Configuration
 from blogging.post import Post
 
-from blogging import binary_search, pickle_update_file
+from blogging.helper import binary_search, pickle_update_file
 
 
 class PostDAO(ABC):
@@ -55,7 +55,7 @@ class PostDAOPickle(PostDAO):
                     if self.posts:
                         self.blog.counter = self.posts[-1].code
             except Exception as e:
-                print(f"file error {e}")
+            
                 # create the new file with an empty array initalized
                 pickle_update_file(self.posts, self.blog_records_file)
 

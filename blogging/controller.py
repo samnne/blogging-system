@@ -1,7 +1,7 @@
 from blogging.blog import Blog
 from blogging.post import Post
 from blogging.dao.blog_dao import BlogDAOJSON
-from blogging.__init__ import get_password_hash, raise_exception
+from blogging.helper import get_password_hash, raise_exception
 from blogging.configuration import Configuration
 from blogging.exception.invalid_login_exception import InvalidLoginException
 from blogging.exception.invalid_logout_exception import InvalidLogoutException

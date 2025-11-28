@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import json
 from blogging.configuration import Configuration
-from blogging.__init__ import binary_search, json_update_file, raise_exception
+from blogging.helper import binary_search, json_update_file, raise_exception
 from blogging.blog import Blog
 from blogging.dao.blog_encoder_decoder import BlogDecoder, BlogEncoder
 from blogging.exception.illegal_access_exception import IllegalAccessException
