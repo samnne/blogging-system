@@ -15,7 +15,7 @@ BLOGGING SYSTEM - MAIN MENU
 
 1 - Add new blog - Dialog - Done
 2 - Search blog by ID - Done
-3 - Retrieve blogs by name add UI/change table view - Not Done
+3 - Retrieve blogs by name add UI/change table view - Done
 4 - Change blog data - inline edit? - Yes
 5 - Remove blog - a widget button - Yes
 6 - List all blogs - TableView - Yes

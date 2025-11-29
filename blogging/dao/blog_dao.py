@@ -83,7 +83,7 @@ class BlogDAOJSON(BlogDAO):
         Returns list of blogs or raises an error
         """
         filtered_blogs: list[Blog] = [
-            blog for blog in self.blogs if search_string in blog.name
+            blog for blog in self.blogs if search_string.lower() in blog.name.lower()
         ]
         return filtered_blogs
 

@@ -93,7 +93,7 @@ class PostDAOPickle(PostDAO):
             post
             for post in self.posts
             # fileter by search_string
-            if search_string in post.title or search_string in post.text
+            if search_string.lower() in post.title.lower() or search_string.lower() in post.text.lower()
         ]
 
         return filtered_list

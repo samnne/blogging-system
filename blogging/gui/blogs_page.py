@@ -21,12 +21,15 @@ from blogging.gui.handle_error import ErrorGUI
 
 class BlogsPage:
 
-    def __init__(self, table_list_data, table_header, controller: Controller):
+    def __init__(
+        self, blogs_table, table_list_data, table_header, controller: Controller
+    ):
         # Blogs Page
 
         self.table_list_data = table_list_data
         self.controller = controller
         self.table_header = table_header
+        self.blogs_table = blogs_table
         self.run_ui()
 
     def run_ui(self):
@@ -50,7 +53,6 @@ class BlogsPage:
             convert_data(data=self.table_list_data), self.table_header
         )
 
-        self.blogs_table = QTableView()
         self.blogs_table.setShowGrid(False)
         self.blogs_table.setAlternatingRowColors(True)
         self.blogs_table.setModel(self.blogs_table_model)
@@ -90,6 +92,7 @@ class BlogsPage:
             if idx.data() == blog_id:
                 return row
         return -1
+
     def blog_modal(self, innerText):
         self.dialog = QDialog()
 
@@ -195,7 +198,9 @@ class BlogsPage:
         for widget in form_list:
             if widget != search_btn:
                 form_layout.addWidget(widget)
-            elif widget == search_btn and "Update" in innerText or "Delete" in innerText:
+            elif (
+                widget == search_btn and "Update" in innerText or "Delete" in innerText
+            ):
                 form_layout.addWidget(widget)
 
         search_btn.clicked.connect(lambda: self.handle_search(*form_list))
@@ -217,13 +222,16 @@ class BlogsPage:
 
     def handle_btn_edit(self, *args):
         id_input, name_input, email_input, url_input, btn, sbtn = args
+        if not id_input.text():
+            sbtn.setEnabled(True)
+
         if (
             id_input.text()
             and name_input.text()
             and email_input.text()
             and url_input.text()
         ):
-            
+
             btn.setEnabled(True)
         else:
             btn.setEnabled(False)
@@ -266,27 +274,87 @@ class BlogsPage:
                     "Oops",
                     error_msg="Blog already exists",
                 )
-               
-    
-    def handle_delete_blog(self):
-        form_data = self.blog_modal("Delete")
+
+    def delete_blog(self, form_data, dialog):
+        
         blog_id, name, email, url = form_data
         if blog_id:
             try:
                 self.controller.delete_blog(id=blog_id)
                 self.blogs_table_model._data.pop(self.find_row_by_id(blog_id=blog_id))
                 self.blogs_table_model.layoutChanged.emit()
-                
+
             except Exception as e:
                 ErrorGUI(
                     self.dialog,
                     "Oops",
                     error_msg="Can't Delete Current Blog",
                 )
-               
+        dialog.close()
+
+
+    def handle_delete_blog(self):
+        form_data = self.blog_modal("Delete")
+        confirm = QDialog()
+        confirm.setStyleSheet("""
+             QWidget {
+                background: white;
+                color: black;
+            }
+            QLabel{
+                font-weight: bold;
+                font-size: 18px;
+                padding: 20px;
+            }
+            QFrame QPushButton{
+                background: #e63946;
+                padding: 8px;
+                border-radius: 12px;
+                color: white;
+            }
+            QFrame QPushButton:hover{
+                background: #e6394690;
+                
+            }
+        """
+        )
+        confirm.setWindowTitle("Are You Sure?")
+        conf_layout = QVBoxLayout()
+        confirm.setLayout(conf_layout)
+
+        label = QLabel(
+            "Are you sure you want to delete this blog? \nThis action cannot be undone."
+        )
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        cancel_button = CustomButton("Cancel")
+        cancel_button.setStyleSheet(
+            """
+            QPushButton{
+                background:  rgba(0,0,0,0.5);
+            }
+            QPushButton:hover{
+                background:  rgba(0,0,0,0.2);
+            }
+            """
+        )
+        
+        confirm_delete = CustomButton("Delete")
+        confirm_delete.clicked.connect(lambda: self.delete_blog(form_data, confirm))
+        conf_layout.addWidget(label)
+        cancel_button.clicked.connect(lambda: confirm.accept())
+
+        button_frame = newQFrame(QHBoxLayout(), id="buttons")
+        button_frame.setContentsMargins(20, 20, 20, 20)
+        button_layout = button_frame.layout()
+        button_layout.addWidget(confirm_delete)
+
+        button_layout.addWidget(cancel_button)
+
+        
+        conf_layout.addWidget(button_frame)
+        confirm.exec()
         
 
-    
 
     def handle_text_edit(self, *args, blog=None):
 
@@ -307,8 +375,16 @@ class BlogsPage:
         blog_id, name, email, url = form_data
         if blog_id:
             try:
-                self.controller.update_blog(search_id=self.search_id, new_id=blog_id,name=name, url=url, email=email)
-                self.blogs_table_model._data[self.find_row_by_id(self.search_id)] = form_data
+                self.controller.update_blog(
+                    search_id=self.search_id,
+                    new_id=blog_id,
+                    name=name,
+                    url=url,
+                    email=email,
+                )
+                self.blogs_table_model._data[self.find_row_by_id(self.search_id)] = (
+                    form_data
+                )
                 self.blogs_table_model.layoutChanged.emit()
             except Exception as e:
                 ErrorGUI(

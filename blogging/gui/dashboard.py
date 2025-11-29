@@ -3,10 +3,12 @@ from blogging.configuration import Configuration
 
 from blogging.gui.blogs_page import BlogsPage
 from blogging.gui.custom_button import CustomButton
+from blogging.gui.table_view import TableModel
 from blogging.controller import Controller
 
+
 from PyQt6.QtCore import Qt
-from blogging.helper import newQFrame
+from blogging.helper import newQFrame, convert_data
 
 from PyQt6.QtWidgets import (
     QApplication,
@@ -38,15 +40,14 @@ class Dashboard(QMainWindow):
         self.setMinimumSize(1200, 720)
         with open("blogging/gui/dashboard.qss", "r") as f:
             self.setStyleSheet(f.read())
-        self.pointing_cursor = QCursor(Qt.CursorShape.PointingHandCursor)
-
+      
         self.controller = controller
         self.login_winodw = login_window
         self.blog_table_header = ["Id", "Name", "Email", "URL"]
         self.int_input_validator = QIntValidator(0, 9999)
 
         self.table_list_data = self.controller.list_blogs()
-
+        self.blogs_table = QTableView()
         self.main_layout()
 
         self.show()
@@ -81,19 +82,26 @@ class Dashboard(QMainWindow):
         if self.controller.get_current_blog():
             post = self.controller.search_post(int(searchbar_input.text()))
             print(post)
-        else:
+        elif searchbar_input.text().isdigit():
             blog = self.controller.search_blog(int(searchbar_input.text()))
+            if blog:
+                new_model = TableModel(
+                    data=[blog.to_list()], headers=self.blog_table_header
+                )
+                self.blogs_table.setModel(new_model)
+        elif searchbar_input.text():
+            blogs = self.controller.retrieve_blogs(search_string=searchbar_input.text())
             new_model = TableModel(
-                data=[blog.to_list()], headers=self.blog_table_header
-            )
+                    data=convert_data(blogs), headers=self.blog_table_header
+                )
             self.blogs_table.setModel(new_model)
+
 
     def handle_search_button(self, input_text, btn):
         if not input_text.text():
             # dialog
             btn.setEnabled(False)
-            self.blogs_table.setModel(self.blogs_table_model)
-
+            self.blogs_table.setModel(self.blogs_page_main.blogs_table_model)
             return
         else:
             btn.setEnabled(True)
@@ -105,7 +113,7 @@ class Dashboard(QMainWindow):
         self.searchbar_input.textChanged.connect(
             lambda: self.handle_search_button(self.searchbar_input, searchbar_submit)
         )
-        self.searchbar_input.setValidator(self.int_input_validator)
+        #self.searchbar_input.setValidator(self.int_input_validator)
         self.searchbar_input.setPlaceholderText("Blog")
         searchbar_submit = CustomButton("Search")
         searchbar_submit.clicked.connect(
@@ -113,7 +121,7 @@ class Dashboard(QMainWindow):
                 searchbar_input=self.searchbar_input, searchbar_submit=searchbar_submit
             )
         )
-        searchbar_submit.setCursor(self.pointing_cursor)
+      
         searchbar_submit.setEnabled(False)
 
         sbl.addWidget(self.searchbar_input, stretch=2)  # type: ignore
@@ -124,7 +132,7 @@ class Dashboard(QMainWindow):
 
     def handle_unset_blog(self):
         self.controller.unset_current_blog()
-        self.current_blog_label.setText("Curent Blog: None")
+        self.current_blog_label.setText("Current Blog: None")
         self.searchbar_input.setPlaceholderText("Blogs")
 
     def handle_set_blog(self, dialog):
@@ -139,7 +147,7 @@ class Dashboard(QMainWindow):
         else:
             self.controller.set_current_blog(int(self.blog_id_input.text()))
             self.current_blog_label.setText(
-                f"Curent Blog: {self.controller.get_current_blog().name}"
+                f"Current Blog: {self.controller.get_current_blog().name}" # type: ignore
             )
             self.searchbar_input.setPlaceholderText("Posts")
             print(self.controller.get_current_blog())
@@ -163,9 +171,6 @@ class Dashboard(QMainWindow):
 
         dl.addWidget(btn)
         dialog.exec()
-
-    def show_blog_modal(self):
-        pass
 
     def main_layout(self):
         """
@@ -204,15 +209,14 @@ class Dashboard(QMainWindow):
         # Blogs, Posts
         a_top = newQFrame(QVBoxLayout(), id="aside-t")
         a_top_l = a_top.layout()
-        a_top_l.setAlignment(Qt.AlignmentFlag.AlignTop)
+        a_top_l.setAlignment(Qt.AlignmentFlag.AlignTop) # type: ignore
         a_top_blogs = CustomButton("Blogs")
-        a_top_blogs.setCursor(self.pointing_cursor)
-
+       
         a_top_blogs.setFixedHeight(50)
 
         a_top_posts = CustomButton("View Blog Post")
-        a_top_posts.setCursor(self.pointing_cursor)
 
+   
         a_top_posts.clicked.connect(lambda: self.set_current_blog_ui())
         a_top_posts.setFixedHeight(50)
 
@@ -238,14 +242,14 @@ class Dashboard(QMainWindow):
             }
         """
         )
-        self.current_blog_label.setCursor(self.pointing_cursor)
+     
         self.current_blog_label.clicked.connect(self.handle_unset_blog)
-        a_b_l.addWidget(self.current_blog_label)
+        a_b_l.addWidget(self.current_blog_label) # type: ignore
 
         al.addWidget(a_top, stretch=3)  # type: ignore
         al.addWidget(a_bottom, stretch=1)  # type: ignore
 
-        self.blogs_page_main = BlogsPage(controller=self.controller, table_header=self.blog_table_header, table_list_data=self.table_list_data)
+        self.blogs_page_main = BlogsPage(blogs_table=self.blogs_table, controller=self.controller, table_header=self.blog_table_header, table_list_data=self.table_list_data)
      
 
 
@@ -254,7 +258,7 @@ class Dashboard(QMainWindow):
         cl = content.layout()
         cl.addWidget(aside, stretch=1)  # type: ignore
         cl.addWidget(self.blogs_page_main.returnFrame(), stretch=3)  # type: ignore
-        cl.setSpacing(0)
+        cl.setSpacing(0) # type: ignore
 
         hbox.addWidget(top_nav, stretch=1)
         hbox.addWidget(content, stretch=6)
