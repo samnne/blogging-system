@@ -3,19 +3,6 @@ import pickle
 from typing import Type
 import json
 
-from PyQt6.QtWidgets import QFrame
-
-
-
-
-def newQFrame(layout, id):
-    qframe = QFrame()
-
-    qframe.setObjectName(id)
-    qframe.setLayout(layout)
-
-    return qframe
-
 
 def convert_data( data: list):
     from blogging.blog import Blog

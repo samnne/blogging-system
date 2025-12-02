@@ -1,14 +1,16 @@
 import sys
 from blogging.configuration import Configuration
 
-from blogging.gui.blogs_page import BlogsPage
-from blogging.gui.custom_button import CustomButton
-from blogging.gui.table_view import TableModel
+from blogging.gui.pages.blogs_page import BlogsPage
+from blogging.gui.pages.posts_page import PostsPage
+from blogging.gui.components.custom_button import CustomButton
+from blogging.gui.components.table_view import TableModel
 from blogging.controller import Controller
 
 
 from PyQt6.QtCore import Qt
-from blogging.helper import newQFrame, convert_data
+from blogging.helper import convert_data
+from blogging.gui.components.utils import newQFrame
 
 from PyQt6.QtWidgets import (
     QApplication,
@@ -38,7 +40,7 @@ class Dashboard(QMainWindow):
         super().__init__()
         self.setWindowTitle("uBlog Dashboard")
         self.setMinimumSize(1200, 720)
-        with open("blogging/gui/dashboard.qss", "r") as f:
+        with open("blogging/gui/dashboard.css", "r") as f:
             self.setStyleSheet(f.read())
       
         self.controller = controller
@@ -48,6 +50,10 @@ class Dashboard(QMainWindow):
 
         self.table_list_data = self.controller.list_blogs()
         self.blogs_table = QTableView()
+        self.posts_page = PostsPage(controller=self.controller)
+        self.blogs_page_main = BlogsPage(blogs_table=self.blogs_table, controller=self.controller, table_header=self.blog_table_header, table_list_data=self.table_list_data)
+     
+
         self.main_layout()
 
         self.show()
@@ -150,9 +156,12 @@ class Dashboard(QMainWindow):
                 f"Current Blog: {self.controller.get_current_blog().name}" # type: ignore
             )
             self.searchbar_input.setPlaceholderText("Posts")
-            print(self.controller.get_current_blog())
+            self.toggle_pages()
             dialog.close()
 
+    def toggle_pages(self):
+        self.blogs_page_main.hide()
+        self.posts_page.button_grid.show()
     def set_current_blog_ui(self):
         dialog = QDialog()
         dl = QVBoxLayout()
@@ -249,22 +258,23 @@ class Dashboard(QMainWindow):
         al.addWidget(a_top, stretch=3)  # type: ignore
         al.addWidget(a_bottom, stretch=1)  # type: ignore
 
-        self.blogs_page_main = BlogsPage(blogs_table=self.blogs_table, controller=self.controller, table_header=self.blog_table_header, table_list_data=self.table_list_data)
-     
+       
 
-
-        self.posts_page = newQFrame(QVBoxLayout(), id="current-blog-post")
-
+        
+        
+        
         cl = content.layout()
         cl.addWidget(aside, stretch=1)  # type: ignore
         cl.addWidget(self.blogs_page_main.returnFrame(), stretch=3)  # type: ignore
+        self.posts_page.button_grid.hide()
+        cl.addWidget(self.posts_page.button_grid, stretch=3) # type: ignore
         cl.setSpacing(0) # type: ignore
 
         hbox.addWidget(top_nav, stretch=1)
         hbox.addWidget(content, stretch=6)
 
         button = CustomButton("")
-        button.clicked.connect(lambda: self.update_css("blogging/gui/dashboard.qss"))
+        button.clicked.connect(lambda: self.update_css("blogging/gui/dashboard.css"))
         hbox.addWidget(button)
         center_widget.setLayout(hbox)
 

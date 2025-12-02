@@ -15,11 +15,11 @@ class Controller:
 
     def __init__(self) -> None:
 
-        self.configuration = Configuration()
+        self.configuration = Configuration.autosave
 
         self.user: dict[str, str] = {}
         try:
-            file = open(self.configuration.users_file, "r")
+            file = open(Configuration.users_file, "r")
             content = file.readlines()
             for line in content:
                 user: str

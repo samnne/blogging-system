@@ -15,8 +15,9 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QGraphicsDropShadowEffect,
 )
-from PyQt6.QtGui import QPixmap, QColor, QFontDatabase, QFont, QCursor
+from PyQt6.QtGui import QPixmap, QColor, QCursor
 from blogging.gui.dashboard import Dashboard
+from blogging.gui.components.handle_error import ErrorGUI
 
 
 class BloggingGUI(QMainWindow):
@@ -33,7 +34,7 @@ class BloggingGUI(QMainWindow):
 
         self.setWindowTitle("uBlog")
 
-        with open("blogging/gui/login.qss", "r") as f:
+        with open("blogging/gui/login.css", "r") as f:
             self.setStyleSheet(f.read())
 
         self.setMaximumSize(1200, 720)
@@ -61,12 +62,20 @@ class BloggingGUI(QMainWindow):
         user_text = user_input.text()
         pass_text = pass_input.text()
 
-        logged_in = self.controller.login(user_text, pass_text)
+        try:
+            
+            logged_in = self.controller.login(user_text, pass_text)
 
-        if logged_in:
-            user_input.setText("")
-            pass_input.setText("")
-            self.openDashboard()
+            if logged_in:
+                user_input.setText("")
+                pass_input.setText("")
+                self.openDashboard()
+        except:
+            ErrorGUI(self, 
+                "Bad Login Credentials",
+                "Incorrect Username or Password"
+                )
+            
 
     def loginUI(self):
         central_widget = QWidget()

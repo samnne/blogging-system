@@ -21,22 +21,22 @@ class IntegrationTest(TestCase):
         self.configuration.__class__.autosave = True
         self.controller = Controller()
 
-    # comment the tearDown method to see the file when the test ends.
-    def tearDown(self):
-        blogs_file = self.configuration.__class__.blogs_file
-        records_path = self.configuration.__class__.records_path
-        blogs_file_exists = os.path.exists(blogs_file)
-        if os.path.exists(records_path):
-            filenames = os.listdir(records_path)
-            for filename in filenames:
-                if self.configuration.__class__.records_extension not in filename:
-                    continue
-                record_file_path = os.path.join(records_path, filename)
-                if os.path.isfile(record_file_path):
-                    os.remove(record_file_path)
-        # removing the blogs file later to avoid concurrency issues
-        if blogs_file_exists:
-            os.remove(blogs_file)
+    # # comment the tearDown method to see the file when the test ends.
+    # def tearDown(self):
+    #     blogs_file = self.configuration.__class__.blogs_file
+    #     records_path = self.configuration.__class__.records_path
+    #     blogs_file_exists = os.path.exists(blogs_file)
+    #     if os.path.exists(records_path):
+    #         filenames = os.listdir(records_path)
+    #         for filename in filenames:
+    #             if self.configuration.__class__.records_extension not in filename:
+    #                 continue
+    #             record_file_path = os.path.join(records_path, filename)
+    #             if os.path.isfile(record_file_path):
+    #                 os.remove(record_file_path)
+    #     # removing the blogs file later to avoid concurrency issues
+    #     if blogs_file_exists:
+    #         os.remove(blogs_file)
 
     def reset_persistence(self):
         self.controller = Controller()
