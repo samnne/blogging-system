@@ -7,17 +7,16 @@ from PyQt6.QtWidgets import (
     QMainWindow,
     QVBoxLayout,
     QHBoxLayout,
-    QGridLayout,
     QWidget,
     QLabel,
     QFrame,
     QLineEdit,
-    QPushButton,
     QGraphicsDropShadowEffect,
 )
 from PyQt6.QtGui import QPixmap, QColor, QCursor
 from blogging.gui.dashboard import Dashboard
 from blogging.gui.components.handle_error import ErrorGUI
+from blogging.gui.components.custom_button import CustomButton
 
 
 class BloggingGUI(QMainWindow):
@@ -149,12 +148,12 @@ class BloggingGUI(QMainWindow):
         # buttons on the bottom
         buttons = QHBoxLayout()
 
-        login_btn = QPushButton("Login")
+        login_btn = CustomButton("Login")
         login_btn.setObjectName("accentButton")
         login_btn.setCursor(self.pointing_cursor)
         login_btn.clicked.connect(lambda: self.submitForm(username, password))
 
-        quit_btn = QPushButton("Quit")
+        quit_btn = CustomButton("Quit")
         quit_btn.setCursor(self.pointing_cursor)
         quit_btn.clicked.connect(lambda: self.close())
         buttons.addWidget(login_btn)
