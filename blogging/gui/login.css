@@ -1,0 +1,82 @@
+
+QWidget {
+   
+    /* font-family: url("blogging/gui/fonts/0xProtoNerdFontMono-Regular.ttf"), monospace; */
+    font-size: 14px;
+    color: #111;
+    background-color: #e63946;
+    
+}
+
+QMainWindow{
+
+    background-color: #e63946;
+    background-repeat: no-repeat;
+    
+    background-position: center;
+}
+QMessageBox {
+    background-color: #e63946;
+    
+}
+QMessageBox QLabel{
+    background-color: #e63946;
+    color: white;
+    font-weight: bold;
+
+}
+QMessageBox QPushButton{
+    background-color: #1d3557;
+    border: none;
+    color: white;
+    font-weight: bold;
+
+}
+QMessageBox QPushButton:hover{
+    background-color: #626796;
+
+}
+
+QFrame{
+    background-color: white;
+    border-radius: 32px;
+}
+
+QLabel{
+    text-align: center;
+
+}
+
+
+QPushButton {
+    background-color: #e5e5ea;
+    border: 1px solid #c7c7cc;
+    border-radius: 8px;
+    padding: 6px 12px;
+}
+
+QPushButton:hover {
+    background-color: #dcdce0;
+}
+
+QPushButton#accentButton {
+    background-color: #1d3557;
+    border: none;
+    color: white;
+}
+
+QPushButton#accentButton:hover {
+    background-color: #626796;
+}
+
+
+
+
+QLineEdit {
+    background-color: #f1f2f6;
+    font-weight: bold;
+    border-radius: 6px;
+    padding: 6px;
+    color: #e63946;
+    letter-spacing: 1px;
+}

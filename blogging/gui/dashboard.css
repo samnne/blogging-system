@@ -1,0 +1,173 @@
+QWidget {
+  background: #f4f1de;
+}
+
+QPushButton {
+  background: #e63946;
+  font-weight: bold;
+  padding: 8px;
+  font-size: 12px;
+}
+QPushButton:hover {
+  background: #df7880;
+  font-weight: bold;
+  padding: 8px;
+  font-size: 12px;
+}
+
+
+#logo {
+  background-image: url("blogging/gui/images/logo.png");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#searchbar QLineEdit {
+  color: black;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+#logout-btn QPushButton {
+  font-size: 14px;
+  background-color: #457b9d;
+  padding: 8px 8px;
+  border-radius: 15px;
+  font-weight: bold;
+}
+
+QPlainTextEdit {
+  color: black;
+ 
+}
+
+#title-label{
+  font-size: 28px;
+  font-weight: bold;
+  color: black;
+  letter-spacing: 1px;
+}
+#text-label{
+  font-size: 16px;
+  color: black;
+}
+
+#button-grid QPushButton{
+  padding: 4px;
+  font-size: 16px;
+  font-weight: bold;
+ 
+ 
+}
+
+
+#page #buttons QPushButton{
+  padding: 4px;
+  font-size: 16px;
+  font-weight: bold;
+
+}
+
+#logout-btn QPushButton:hover {
+  background-color: #a8dadc;
+}
+
+#searchbar QPushButton {
+  font-size: 14px;
+  background-color: #e63946;
+  padding: 8px 8px;
+  border-radius: 15px;
+  font-weight: bold;
+}
+#searchbar QPushButton:hover {
+  background-color: #eca592;
+}
+#searchbar QPushButton:disabled {
+  background-color: #dbb4b7;
+}
+
+#page QLabel {
+  color: rgba(0, 0, 0, 0.2);
+  font-size: 30px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+#main-menu {
+  border-radius: 12px;
+}
+
+
+
+
+/* QHeaderView::section:last {
+  border-top-right-radius: 8px;
+} */
+
+
+QTableView{
+    alternate-background-color: #457b9d7e;
+    outline: 0;
+    
+}
+
+QTableView::item {
+    padding: 12px;
+    
+  color: black;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+ 
+}
+QTableView::item:selected {
+    background-color: #e63946;
+  color: white;
+  
+  border: none;
+ 
+}
+QTableView::item:hover {
+    background-color: #9494949a;
+}
+
+QHeaderView::section {
+   background: #f4f1de;
+    color: rgb(88, 88, 88);
+  padding: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+ 
+  letter-spacing: 1px;
+}
+
+
+#aside-t QPushButton {
+  font-size: 20px;
+  border-radius: 15px;
+  background-color: #e63946;
+  color: #f1faee;
+  padding-left: 20px;
+  font-weight: bold;
+  text-align: left;
+}
+#aside-t QPushButton:hover {
+  background-color: #dd9198;
+  color: #f1faee;
+  padding-left: 20px;
+}
+
+#aside-b QLabel {
+  color: #e63946;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+
+
+#posts-button{
+  background: #457b9d;
+}
