@@ -17,6 +17,7 @@ from PyQt6.QtGui import QPixmap, QColor, QCursor
 from blogging.gui.dashboard import Dashboard
 from blogging.gui.components.handle_error import ErrorGUI
 from blogging.gui.components.custom_button import CustomButton
+from blogging.gui.components.utils import createShadow
 
 
 class BloggingGUI(QMainWindow):
@@ -43,19 +44,12 @@ class BloggingGUI(QMainWindow):
 
         self.loginUI()
 
-    def openDashboard(self):
-        self.dashboard = Dashboard(self.controller, self)
+    def openDashboard(self, current_user):
+        self.dashboard = Dashboard(self.controller, self, current_user)
 
         self.close()
 
-    def createShadow(self, xoff, yoff, r, color):
-        shadow = QGraphicsDropShadowEffect()
-        shadow.setBlurRadius(r)
-        shadow.setXOffset(xoff)
-        shadow.setYOffset(yoff)
-        shadow.setColor(color)
-
-        return shadow
+   
 
     def submitForm(self, user_input: QLineEdit, pass_input: QLineEdit):
         user_text = user_input.text()
@@ -66,9 +60,10 @@ class BloggingGUI(QMainWindow):
             logged_in = self.controller.login(user_text, pass_text)
 
             if logged_in:
+
                 user_input.setText("")
                 pass_input.setText("")
-                self.openDashboard()
+                self.openDashboard(user_text)
         except:
             ErrorGUI(self, 
                 "Bad Login Credentials",
@@ -93,7 +88,7 @@ class BloggingGUI(QMainWindow):
         form_layout.setContentsMargins(50, 20, 50, 20)
         form_side.setLayout(form_layout)
 
-        shadow = self.createShadow(0, 12, 40, Qt.GlobalColor.black)
+        shadow = createShadow(0, 12, 40, Qt.GlobalColor.black)
 
         form_side.setGraphicsEffect(shadow)
 
@@ -123,7 +118,7 @@ class BloggingGUI(QMainWindow):
         username.setPlaceholderText("Username")
        # type: ignore
         username.setObjectName("username")
-        u_shadow = self.createShadow(0, 4, 6, QColor(0, 0, 0, 20))
+        u_shadow = createShadow(0, 4, 6, QColor(0, 0, 0, 20))
 
         username.setGraphicsEffect(u_shadow)
 
@@ -133,7 +128,7 @@ class BloggingGUI(QMainWindow):
         password = QLineEdit()
         password.setPlaceholderText("Password")
         password.setObjectName("password")
-        p_shadow = self.createShadow(0, 4, 6, QColor(0, 0, 0, 20))
+        p_shadow = createShadow(0, 4, 6, QColor(0, 0, 0, 20))
 
         password.setGraphicsEffect(p_shadow)
         password.setEchoMode(QLineEdit.EchoMode.Password)

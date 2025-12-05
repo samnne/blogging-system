@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import (
     QLabel,
     QVBoxLayout,
-    QTableView,
+
     QSizePolicy,
     QHeaderView,
     QHBoxLayout,
@@ -18,6 +18,7 @@ from blogging.gui.components.utils import newQFrame
 from blogging.controller import Controller
 
 from blogging.gui.components.handle_error import ErrorGUI
+from blogging.gui.components.utils import int_input_validator
 
 
 class BlogsPage:
@@ -45,7 +46,8 @@ class BlogsPage:
         
 
         # The Blog System Header
-        blogs_header = QLabel("Blogging System")
+        blogs_header = QLabel("Blogs")
+
         blogs_header.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.bpl.addWidget(blogs_header, stretch=1)  # type: ignore
@@ -94,6 +96,9 @@ class BlogsPage:
         self.bpl.addWidget(blogs_page_main, stretch=5)  # type: ignore
 
     def find_row_by_id(self, blog_id):
+        """
+        Ensures the correct row is removed when deleting.
+        """
         for row in range(self.blogs_table_model.rowCount()):
             idx = self.blogs_table_model.index(row, 0)
             if idx.data() == blog_id:
@@ -101,6 +106,9 @@ class BlogsPage:
         return -1
 
     def blog_modal(self, innerText):
+        """
+        The blog modal
+        """
         self.dialog = QDialog()
 
         self.dialog.setStyleSheet(
@@ -113,6 +121,7 @@ class BlogsPage:
                 font-weight: bold;
                 font-size: 32px;
                 padding: 20px;
+                
             }
             QFrame QPushButton{
                 background: #e63946;
@@ -168,7 +177,7 @@ class BlogsPage:
         id_input = QLineEdit(blog.id if blog else None)
 
         id_input.setPlaceholderText("Blog ID")
-        id_input.setValidator(QIntValidator(0, 2147483647))
+        id_input.setValidator(int_input_validator)
 
         # Name
 
@@ -225,16 +234,20 @@ class BlogsPage:
 
         self.dialog.setLayout(layout)
 
-        self.dialog.exec()
+        close = self.dialog.exec()
 
         return [
             int(id_input.text()) if id_input.text().isdigit() else "",
             name_input.text(),
             email_input.text(),
             url_input.text(),
+            close
         ]
 
     def handle_btn_edit(self, *args):
+        """
+        Enables/Disables the sumbit button in the form
+        """
         id_input, name_input, email_input, url_input, btn, sbtn = args
         if not id_input.text():
             sbtn.setEnabled(True)
@@ -278,8 +291,8 @@ class BlogsPage:
 
         form_data = self.blog_modal(innerText="Add Blog")
 
-        blog_id, name, email, url = form_data
-        if blog_id:
+        blog_id, name, email, url, close = form_data
+        if close:
             try:
                 self.controller.create_blog(id=blog_id, name=name, url=url, email=email)
                 self.blogs_table_model.add_row(form_data)
@@ -292,8 +305,8 @@ class BlogsPage:
 
     def delete_blog(self, form_data, dialog):
         
-        blog_id, name, email, url = form_data
-        if blog_id:
+        blog_id, name, email, url, close = form_data
+        if close:
             try:
                 self.controller.delete_blog(id=blog_id)
                 self.blogs_table_model._data.pop(self.find_row_by_id(blog_id=blog_id))
@@ -310,6 +323,8 @@ class BlogsPage:
 
     def handle_delete_blog(self):
         form_data = self.blog_modal("Delete")
+        if not form_data[4]: # the close variable to detemine whether to run dialog GUI
+            return
         confirm = QDialog()
         confirm.setStyleSheet("""
              QWidget {
@@ -375,7 +390,9 @@ class BlogsPage:
 
 
     def handle_text_edit(self, *args, blog=None):
-
+        """
+        Disables/Enables the LineEdits
+        """
         name_input, email_input, url_input = args
 
         if blog:
@@ -390,8 +407,8 @@ class BlogsPage:
     def handle_update_blog(self):
 
         form_data = self.blog_modal(innerText="Update Blog")
-        blog_id, name, email, url = form_data
-        if blog_id:
+        blog_id, name, email, url, close = form_data
+        if close:
             try:
                 self.controller.update_blog(
                     search_id=self.search_id,

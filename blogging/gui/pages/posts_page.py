@@ -1,22 +1,18 @@
 from PyQt6.QtWidgets import (
     QLabel,
     QVBoxLayout,
-    QTableView,
-    QSizePolicy,
-    QHeaderView,
-    QHBoxLayout,
+  
     QDialog,
     QLineEdit,
     QGridLayout,
     QPlainTextEdit,
     QTextEdit,
 )
-from PyQt6.QtGui import QIntValidator
 
 from PyQt6.QtCore import Qt
-from blogging.gui.components.table_view import TableModel
+
 from blogging.gui.components.custom_button import CustomButton
-from blogging.helper import convert_data
+
 from blogging.gui.components.utils import newQFrame
 from blogging.controller import Controller
 
@@ -73,8 +69,9 @@ class PostsPage:
             self.handle_text_edit(*args, post=post)
             title.setText(post.title)
             text.setPlainText(post.text)
-
+            code_input.setEnabled(False)
             btn.setEnabled(True)
+           
 
         else:
             ErrorGUI(
@@ -117,7 +114,11 @@ class PostsPage:
                 )
                 
         except Exception as e:
-            print("Error", e)
+            ErrorGUI(
+                parent=self.plain_text_edit,
+                title="Uhm...",
+                error_msg="Something went wrong displaying posts"
+            )
 
     def post_modal(self, innerText):
         self.dialog = QDialog()
@@ -211,6 +212,7 @@ class PostsPage:
 
         if "Update" in innerText or "Delete" in innerText:
             title_input.setEnabled(False)
+            
             text_input.setEnabled(False)
         else:
             code_input.hide()
@@ -237,21 +239,29 @@ class PostsPage:
 
         self.dialog.setLayout(layout)
 
-        self.dialog.exec()
-
+        close = self.dialog.exec()
+        
         return [
             code_input.text() if code_input.text() else "",
             title_input.text(),
             text_input.toPlainText(),
+            close
         ]
 
     def run_ui(self):
 
+        posts_header = QLabel("Posts")
+
+        posts_header.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.page_layout.addWidget(posts_header, 0,0,1,3)  # type: ignore
+
+        self.page_layout.addWidget(self.plain_text_edit, 1, 0, 1, 3)
+        
         add_btn = CustomButton(text="Add Posts")
 
         update_btn = CustomButton(text="Update Posts")
         delete_btn = CustomButton(text="Delete Posts")
-        self.page_layout.addWidget(self.plain_text_edit, 0, 0, 1, 3)
 
         add_btn.clicked.connect(lambda: self.handle_add_post())
         update_btn.clicked.connect(lambda: self.handle_update_post())
@@ -260,7 +270,7 @@ class PostsPage:
 
 
         buttons_list = [add_btn, update_btn, delete_btn]
-        fbf_grid = [(1, 0), (1, 1), (1, 2)]
+        fbf_grid = [(2, 0), (2, 1), (2, 2)]
 
         for i in range(0, len(buttons_list)):
             self.page_layout.addWidget(
@@ -268,24 +278,30 @@ class PostsPage:
             )
 
     def handle_add_post(self):
+        """
+        Add post GUI logic 
+        """
         form_data = self.post_modal("Add")
 
-        code, title, text = form_data
-
-        try:
-            self.controller.create_post(title=title, text=text)
-            self.display_posts()
-        except Exception as e:
-            ErrorGUI(
-                self.dialog,
-                "Oops",
-                error_msg="Something went wrong",
-            )
+        code, title, text, close = form_data
+        if close:
+            try:
+                self.controller.create_post(title=title, text=text)
+                self.display_posts()
+            except Exception as e:
+                ErrorGUI(
+                    self.dialog,
+                    "Oops",
+                    error_msg="Something went wrong",
+                )
 
     def handle_update_post(self):
+        """
+        Code to update the modal, checks the close variable
+        """
         form_data = self.post_modal("Update")
-        code, title, text = form_data
-        if code:
+        code, title, text, close = form_data
+        if close:
             try:
                 self.controller.update_post(title=title, text=text, code=int(code))
                 self.display_posts()
@@ -297,9 +313,14 @@ class PostsPage:
                 )
 
     def handle_delete_post(self):
+
+        """
+        delete GUI logic 
+        """
         form_data = self.post_modal("Delete")
         code = form_data[0]
-        if code:
+        close = form_data[3]
+        if close:
             try:
                 self.controller.delete_post(code=int(code))
                 self.display_posts()

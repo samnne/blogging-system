@@ -37,6 +37,7 @@ QPushButton:hover {
   padding: 8px 8px;
   border-radius: 15px;
   font-weight: bold;
+
 }
 
 QPlainTextEdit {
@@ -63,6 +64,10 @@ QPlainTextEdit {
  
 }
 
+#content QLabel{
+  color: black;
+}
+
 
 #page #buttons QPushButton{
   padding: 4px;
@@ -73,6 +78,9 @@ QPlainTextEdit {
 
 #logout-btn QPushButton:hover {
   background-color: #a8dadc;
+}
+#searchbar QLineEdit {
+  
 }
 
 #searchbar QPushButton {
@@ -90,14 +98,18 @@ QPlainTextEdit {
 }
 
 #page QLabel {
-  color: rgba(0, 0, 0, 0.2);
+  color: rgb(0, 0, 0);
   font-size: 30px;
   text-transform: uppercase;
   font-weight: bold;
 }
-#main-menu {
-  border-radius: 12px;
+#button-grid QLabel {
+  color: rgb(0, 0, 0);
+  font-size: 30px;
+  text-transform: uppercase;
+  font-weight: bold;
 }
+
 
 
 
@@ -169,5 +181,5 @@ QHeaderView::section {
 
 
 #posts-button{
-  background: #457b9d;
+  background: #457b9dd8;
 }

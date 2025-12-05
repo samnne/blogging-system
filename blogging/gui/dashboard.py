@@ -10,8 +10,9 @@ from blogging.controller import Controller
 
 from PyQt6.QtCore import Qt
 from blogging.helper import convert_data
-from blogging.gui.components.utils import newQFrame
+from blogging.gui.components.utils import newQFrame, createShadow
 from blogging.gui.components.handle_error import ErrorGUI
+from blogging.gui.components.utils import int_input_validator
 
 from PyQt6.QtWidgets import (
     QApplication,
@@ -37,18 +38,17 @@ from PyQt6.QtGui import QPixmap, QColor, QCursor, QFont, QIntValidator
 
 class Dashboard(QMainWindow):
 
-    def __init__(self, controller: Controller, login_window) -> None:
+    def __init__(self, controller: Controller, login_window, current_user: str) -> None:
         super().__init__()
         self.setWindowTitle("uBlog Dashboard")
         self.setMinimumSize(1200, 720)
         with open("blogging/gui/dashboard.css", "r") as f:
             self.setStyleSheet(f.read())
-
+        self.current_user = current_user
         self.controller = controller
         self.login_winodw = login_window
         self.blog_table_header = ["Id", "Name", "Email", "URL"]
-        self.int_input_validator = QIntValidator(0, 9999)
-
+        
         self.table_list_data = self.controller.list_blogs()
         self.blogs_table = QTableView()
         self.posts_page = PostsPage(controller=self.controller)
@@ -86,6 +86,16 @@ class Dashboard(QMainWindow):
         logout_btn.clicked.connect(lambda: self.handle_logout())
 
         logout_l = logout.layout()
+        current_user_label = QLabel(f"Current User:  {self.current_user.capitalize()}")
+        current_user_label.setStyleSheet(
+            """
+            QLabel {
+                color: #457b9d;
+               
+            }
+            """
+        )
+        logout_l.addWidget(current_user_label)
         logout_l.setContentsMargins(250, 10, 0, 10)  # type: ignore
         logout_l.addWidget(logout_btn, stretch=1)  # type: ignore
         return logout
@@ -125,7 +135,8 @@ class Dashboard(QMainWindow):
             # dialog
             btn.setEnabled(False)
             self.blogs_table.setModel(self.blogs_page_main.blogs_table_model)
-            self.posts_page.display_posts()
+            if self.controller.get_current_blog():
+                self.posts_page.display_posts()
         else:
             btn.setEnabled(True)
 
@@ -133,11 +144,13 @@ class Dashboard(QMainWindow):
         searchbar = newQFrame(QHBoxLayout(), id="searchbar")
         sbl = searchbar.layout()  # type: ignore
         self.searchbar_input = QLineEdit()
+        self.searchbar_input.setGraphicsEffect(
+            createShadow(0, 10, 5, QColor(0, 0, 0, 80))
+        )
         self.searchbar_input.textChanged.connect(
             lambda: self.handle_search_button(self.searchbar_input, searchbar_submit)
         )
-        # self.searchbar_input.setValidator(self.int_input_validator)
-        self.searchbar_input.setPlaceholderText("Blog")
+        self.searchbar_input.setPlaceholderText("Blogs")
         searchbar_submit = CustomButton("Search")
         searchbar_submit.clicked.connect(
             lambda: self.handle_search(
@@ -160,6 +173,8 @@ class Dashboard(QMainWindow):
         self.show_blogs_page()
 
     def handle_set_blog(self, dialog):
+        if not self.blog_id_input.text():
+            return
         if self.controller.get_current_blog():
             QMessageBox.warning(
                 dialog,
@@ -168,7 +183,16 @@ class Dashboard(QMainWindow):
                 QMessageBox.StandardButton.Ok,
             )
             return
+        elif not self.controller.search_blog(int(self.blog_id_input.text())):
+            QMessageBox.warning(
+                dialog,
+                "Hold It!",
+                "Blog Doesn't Exist",
+                QMessageBox.StandardButton.Ok,
+            )
+            return
         else:
+
             self.controller.set_current_blog(int(self.blog_id_input.text()))
             self.current_blog_label.setText(
                 f"Current Blog: {self.controller.get_current_blog().name}"  # type: ignore
@@ -179,11 +203,13 @@ class Dashboard(QMainWindow):
 
     def show_blogs_page(self):
         self.blogs_page_main.show()
+        self.searchbar_input.setPlaceholderText("Blogs")
         self.posts_page.page_grid.hide()
 
     def show_posts_page(self):
 
         self.blogs_page_main.hide()
+        self.searchbar_input.setPlaceholderText("Posts")
         self.posts_page.page_grid.show()
         self.posts_page.display_posts()
 
@@ -225,7 +251,7 @@ class Dashboard(QMainWindow):
         label = QLabel("Please Set Current Blog")
         self.blog_id_input = QLineEdit()
         self.blog_id_input.setPlaceholderText("Blog Id")
-        self.blog_id_input.setValidator(self.int_input_validator)
+        self.blog_id_input.setValidator(int_input_validator)
         dl.addWidget(label)
         dl.addWidget(self.blog_id_input)
 
@@ -253,6 +279,7 @@ class Dashboard(QMainWindow):
         top_nav = newQFrame(QHBoxLayout(), id="top-nav")
         tnl = top_nav.layout()
         logo = newQFrame(QHBoxLayout(), id="logo")
+        logo.setFixedHeight(100)
 
         searchbar = self.search_bar()
 
@@ -262,7 +289,7 @@ class Dashboard(QMainWindow):
 
         [tnl.addWidget(item, stretch=1) for item in tn_list]  # type: ignore
 
-        # Main Content -> PAGE dependent... Lowkey scary asf
+        # Main Content -> PAGE dependent...
         content = newQFrame(QHBoxLayout(), id="content")
 
         # Side Nav with Blog and Posts search?
@@ -319,6 +346,7 @@ class Dashboard(QMainWindow):
             }
         """
         )
+        self.current_blog_label.setGraphicsEffect(None)
 
         self.current_blog_label.clicked.connect(self.handle_unset_blog)
         a_b_l.addWidget(self.current_blog_label)  # type: ignore
@@ -336,9 +364,10 @@ class Dashboard(QMainWindow):
         hbox.addWidget(top_nav, stretch=1)
         hbox.addWidget(content, stretch=6)
 
-        button = CustomButton("")
-        button.clicked.connect(lambda: self.update_css("blogging/gui/dashboard.css"))
-        hbox.addWidget(button)
+        # button = CustomButton("")
+        # button.clicked.connect(lambda: self.update_css("blogging/gui/dashboard.css"))
+        # hbox.addWidget(button)
+
         center_widget.setLayout(hbox)
 
 
@@ -346,7 +375,7 @@ def main():
     app = QApplication(sys.argv)
     con = Controller()
     con.login("user", "123456")
-    window = Dashboard(con, None)
+    window = Dashboard(con, None, "")
     window.show()
 
     app.exec()

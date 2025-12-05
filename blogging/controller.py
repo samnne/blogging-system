@@ -42,6 +42,7 @@ class Controller:
 
         if self.user.get(username):
             pass_hash = get_password_hash(password)
+            
             if self.user[username] == pass_hash:
                 self.is_logged_in = True
                 return True
